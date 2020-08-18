@@ -1,20 +1,24 @@
-const app = require("express")();
+const express = require("express");
+const app = express();
 const port = process.env.port || 3000;
 const path = require("path");
-const pageNotFoundController = require("./public/controllers/page-not-found-controller");
+const pageNotFoundController = require("./controllers/page-not-found-controller.js");
 const MongoClient = require("mongodb").MongoClient;
 const uri =
   "mongodb+srv://iwing:iwingku77@cluster0.3abk6.mongodb.net/iwing?retryWrites=true&w=majority";
 // const client = new MongoClient(uri, { useNewUrlParser: true });
 
 app.set("view engine", "ejs");
+app.set("views", "views");
+app.use(express.static("public"));
 // app.set("views", path.join(__dirname, "views"));
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-app.get("*", (req, res) => {
-  res.render("page-not-found.ejs");
-});
+app.get("*", pageNotFoundController);
+// app.get("*", (req, res) => {
+//   res.render("page-not-found.ejs");
+// });
 
 MongoClient.connect(uri, (err, db) => {
   // const collection = client.db("test").collection("devices");
