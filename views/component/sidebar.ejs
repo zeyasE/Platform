@@ -1,0 +1,23 @@
+<script>
+  var click = true;
+  function openandcloseNav() {
+    if (click === true) {
+      document.getElementById("mySidenav").style.width = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      click = false;
+    } else {
+      document.getElementById("mySidenav").style.width = "90px";
+      document.body.style.backgroundColor = "white";
+      click = true;
+    }
+  }
+</script>
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="openandcloseNav()"
+    >( ͡° ͜ʖ ͡°)</a
+  >
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Clients</a>
+  <a href="#">Contact</a>
+</div>

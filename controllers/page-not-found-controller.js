@@ -1,8 +1,9 @@
 const notFound = (req, res, next) => {
   res.render("page-not-found.ejs", {
     data: {
-      pageName: "error404",
-      message: "Dose't find page",
+      error_code: "404",
+      pageName: "Error404",
+      message: "Page not found",
     },
   });
 };
