@@ -3,10 +3,22 @@
   function openandcloseNav() {
     if (click === true) {
       document.getElementById("mySidenav").style.width = "250px";
+      document.getElementById("add1").innerHTML = "Add";
+      document.getElementById("all2").innerHTML = "All";
+      document.getElementById("input3").innerHTML = "Input";
+      document.getElementById("output4").innerHTML = "Output";
       document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
       click = false;
     } else {
       document.getElementById("mySidenav").style.width = "90px";
+      document.getElementById("add1").innerHTML =
+        '<img src="/img/add.png" alt="AddDevice" />';
+      document.getElementById("all2").innerHTML =
+        '<img src="/img/project.png" alt="AddDevice" />';
+      document.getElementById("input3").innerHTML =
+        '<img src="/img/input.png" alt="AddDevice" />';
+      document.getElementById("output4").innerHTML =
+        '<img src="/img/output.png" alt="AddDevice" />';
       document.body.style.backgroundColor = "white";
       click = true;
     }
@@ -14,10 +26,10 @@
 </script>
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="openandcloseNav()"
-    >( ͡° ͜ʖ ͡°)</a
-  >
-  <a href="#">About</a>
-  <a href="#">Services</a>
-  <a href="#">Clients</a>
-  <a href="#">Contact</a>
+    ><img src="/img/menu.png" alt="AddDevice"
+  /></a>
+  <a href="#1" id="add1"><img src="/img/add.png" alt="AddDevice" /></a>
+  <a href="#2" id="all2"><img src="/img/project.png" alt="AddDevice" /></a>
+  <a href="#3" id="input3"><img src="/img/input.png" alt="AddDevice" /></a>
+  <a href="#4" id="output4"><img src="/img/output.png" alt="AddDevice" /></a>
 </div>
