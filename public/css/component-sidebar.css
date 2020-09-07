@@ -5,26 +5,28 @@
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
-  background-color: #ff6666; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
+  background-color: #dc3545; /* Black*/
+  /* overflow-x: hidden; */
+  overflow: auto;
   padding-top: 20px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  /* transition: 0.3s; */
 }
 
 .sidenav a {
-  padding: 25px 0px 8px 25px;
+  padding: 25px 0px 20px 25px;
   text-decoration: none;
   font-size: 20px;
   color: #000000;
   display: block;
-  transition: 0.3s;
+  /* transition: 0.3s; */
   font-weight: bold;
 }
 
 .sidenav img {
-  margin: 0px;
+  margin: 0px 20px 0px 0px;
   height: 35px;
   width: 35px;
+  vertical-align: middle;
 }
 
 .sidenav a:hover {

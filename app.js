@@ -51,6 +51,7 @@ app.get("/testget/:name", async (req, res) => {
   res.json(datauser);
 });
 
+app.get("/add", mainController);
 app.get("/", mainController);
 app.get("*", pageNotFoundController);
 
