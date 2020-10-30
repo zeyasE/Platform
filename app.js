@@ -4,6 +4,8 @@ const port = process.env.port || 3000;
 const path = require("path");
 const pageNotFoundController = require("./controllers/page-not-found-controller.js");
 const mainController = require("./controllers/main-controller.js");
+const addnRegister = require("./controllers/addnregister-controller.js");
+const allProject = require("./controllers/allProject.js");
 const dataUser = require("./models/datauser.js");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -45,13 +47,19 @@ app.get("/testget", async (req, res) => {
   const datauser = await dataUser.find();
   res.json(datauser);
 });
+app.get("/testget/:type", async (req, res) => {
+  const { type } = req.params;
+  const datauser = await dataUser.find({ type: type });
+  res.json(datauser);
+});
 app.get("/testget/:name", async (req, res) => {
   const { name } = req.params;
   const datauser = await dataUser.find({ name: name });
   res.json(datauser);
 });
 
-app.get("/add", mainController);
+app.get("/add", addnRegister);
+app.get("/all", allProject);
 app.get("/", mainController);
 app.get("*", pageNotFoundController);
 

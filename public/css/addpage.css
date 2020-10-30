@@ -1,0 +1,28 @@
+.container-flex {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.container-flex div {
+  height: 9.5em;
+  width: 15em;
+  border: solid;
+  margin: 1em;
+}
+
+.container-flex img {
+  height: 2em;
+  width: 2em;
+}
+
+.container-flex .addsymbol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-flex img:hover {
+  height: 2.5em;
+  width: 2.5em;
+}
