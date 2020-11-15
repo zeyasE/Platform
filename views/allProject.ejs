@@ -36,20 +36,9 @@
     <div><h1>All Project</h1></div>
     <br />
     <div class="container-flex">
-      <div><%= dataallpObj %></div>
-      <div>abcd</div>
-      <div>zxcv</div>
-      <div>qwer</div>
-      <div>qwer</div>
-      <div>abcd</div>
-      <div>zxcv</div>
-      <div>qwer</div>
-      <div>abcd</div>
-      <div>zxcv</div>
-      <div>qwer</div>
-      <div>abcd</div>
-      <div>zxcv</div>
-      <div>qwer</div>
+      <% for(let i=0; i < dataallpObj.length; i++) { %>
+        <div><%= dataallpObj[i].name%></div>
+      <% } %>
     </div>
   </body>
 </html>

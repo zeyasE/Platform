@@ -21,14 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
-app.post("/testpost", async (req, res) => {
+app.post("/apipost", async (req, res) => {
   const payload = req.body;
   const datauser = new dataUser(payload);
   await datauser.save();
   res.status(201).end();
 });
 
-app.put("/testput/:namedevice", async (req, res) => {
+app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
   const { namedevice } = req.params;
   const datauser = await dataUser.findOneAndUpdate(
@@ -43,16 +43,16 @@ app.put("/testput/:namedevice", async (req, res) => {
   res.json(datauser);
 });
 
-app.get("/testget", async (req, res) => {
+app.get("/apiget", async (req, res) => {
   const datauser = await dataUser.find();
   res.json(datauser);
 });
-app.get("/testget/:type", async (req, res) => {
+app.get("/apiget/:type", async (req, res) => {
   const { type } = req.params;
   const datauser = await dataUser.find({ type: type });
   res.json(datauser);
 });
-app.get("/testget/:name", async (req, res) => {
+app.get("/apiget/:name", async (req, res) => {
   const { name } = req.params;
   const datauser = await dataUser.find({ name: name });
   res.json(datauser);
