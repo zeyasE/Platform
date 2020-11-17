@@ -2,7 +2,7 @@ const axios = require("axios");
 const setting = require("../settings")
 const addnRegister = async (req, res, next) => {
   const dataaddproj = await axios
-  .get(`${setting.apiURLallP}`)
+  .get(`${setting.apiURLaddRasp}`)
   .then(res => {
     return res.data;
   })

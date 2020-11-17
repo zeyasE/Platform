@@ -40,7 +40,14 @@
         <img src="/img/addpage.png" alt="addpagesymbol" />
       </div>
       <% for(let i = 0; i < dataaddpObj.length; i++){ %>
-        <div><%= dataaddpObj[i].name %></div>
+        <div class="listproject">
+          <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <p><%= dataaddpObj[i].name %></p>
+          <!-- <button type="button" class="btn btn-outline-primary">Edit</button>
+          <button type="button" class="btn btn-outline-danger">Delete</button> -->
+        </div>
       <% } %>
     </div>
   </body>
