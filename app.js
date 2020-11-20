@@ -22,10 +22,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
 app.post("/apipost", async (req, res) => {
+  try {
   const payload = req.body;
   const datauser = new dataUser(payload);
   await datauser.save();
-  res.status(201).end();
+  res.status(201).end();    
+  } catch (error) {
+    res.status(404).send(error);
+  }
 });
 
 app.put("/apiput/:namedevice", async (req, res) => {
@@ -43,18 +47,34 @@ app.put("/apiput/:namedevice", async (req, res) => {
   res.json(datauser);
 });
 
+//reserve => apidelete
+app.delete("/testapidelete/:name", async (req, res) => {
+  const name = req.params.name;
+  const datauser = await dataUser.findOneAndRemove( { name: name});
+  res.sendStatus(204).send();
+});
+
+//main => apidelete
+app.get("/apidelete/:name", async (req, res) => {
+  const name = req.params.name;
+  const datauser = await dataUser.findOneAndRemove( { name: name}, (err,doc) => {
+    if(err) console.error(err);
+    res.redirect(req.get('referer'));
+  });
+});
+
 app.get("/apiget", async (req, res) => {
   const datauser = await dataUser.find();
   res.json(datauser);
 });
-app.get("/apiget/:type", async (req, res) => {
-  const { type } = req.params;
-  const datauser = await dataUser.find({ type: type });
+app.get("/apiget/n/:name", async (req, res) => {
+  const { name } = req.params;
+  const datauser = await dataUser.findOne({ name:name });
   res.json(datauser);
 });
-app.get("/apiget/:name", async (req, res) => {
-  const { name } = req.params;
-  const datauser = await dataUser.find({ name: name });
+app.get("/apiget/t/:type", async (req, res) => {
+  const { type } = req.params;
+  const datauser = await dataUser.find({ type: type });
   res.json(datauser);
 });
 

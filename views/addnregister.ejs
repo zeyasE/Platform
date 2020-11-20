@@ -36,19 +36,77 @@
     <div><h1>Add Project</h1></div>
     <br />
     <div class="container-flex">
-      <div class="addsymbol">
+      <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddProjectModal">
         <img src="/img/addpage.png" alt="addpagesymbol" />
       </div>
       <% for(let i = 0; i < dataaddpObj.length; i++){ %>
         <div class="listproject">
-          <button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')" href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
           <p><%= dataaddpObj[i].name %></p>
-          <!-- <button type="button" class="btn btn-outline-primary">Edit</button>
-          <button type="button" class="btn btn-outline-danger">Delete</button> -->
         </div>
       <% } %>
     </div>
+
+    <!-- Modal for add -->
+    <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Add Raspberry</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="InputName">Name</label>
+                <input type="name" class="form-control" id="InputNameRas" aria-describedby="nameHelp">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+              </div>
+              <div class="form-group">
+                <label for="InputPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1">
+              </div>
+              <!-- <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div> -->
+              <right>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>                
+              </right>
+              <!-- <div><br /></div> -->
+            </form>
+          </div>
+          <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Done</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure to delete it?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Yes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
