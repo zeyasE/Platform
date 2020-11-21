@@ -26,7 +26,24 @@ app.post("/apipost", async (req, res) => {
   const payload = req.body;
   const datauser = new dataUser(payload);
   await datauser.save();
-  res.status(201).end();    
+  res.status(201).end();
+  } catch (error) {
+    res.status(404).send(error);
+  }
+});
+
+app.post("/apipost/raspi", async (req, res) => {
+  try {
+  const datauser = new dataUser({
+    name: req.body.nameraspi,
+    type: "Raspberry",
+    userId: "Test",
+    descrip: req.body.descripraspi ,
+    dconnect: "none" 
+  });
+  await datauser.save();
+  // res.status(201).end();
+  res.redirect(req.get('referer'));
   } catch (error) {
     res.status(404).send(error);
   }
@@ -63,6 +80,7 @@ app.get("/apidelete/:name", async (req, res) => {
   });
 });
 
+// test get find
 app.get("/apiget", async (req, res) => {
   const datauser = await dataUser.find();
   res.json(datauser);
@@ -77,6 +95,10 @@ app.get("/apiget/t/:type", async (req, res) => {
   const datauser = await dataUser.find({ type: type });
   res.json(datauser);
 });
+
+app.get("/selectraspi/:name");
+
+app.get("/selectiot/:name");
 
 app.get("/add", addnRegister);
 app.get("/all", allProject);
