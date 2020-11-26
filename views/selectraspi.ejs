@@ -32,22 +32,8 @@
     ></script>
   </head>
   <body>
-    <%- include ("./component/sidebar.ejs") -%>
-    <div><h1>All Project</h1></div>
-    <br />
-    <div class="container-flex">
-      <% for(let i=0; i < dataallpObj.length; i++) { %>
-        <% if (dataallpObj[i].status) { %>
-          <div class="listproject">
-            <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')" href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-            <p><%= dataallpObj[i].name%></p>
-          </div>
-      <% }else{ %>
-        <div class="listproject" style="border-color: #b0b0b0;background-color: #b0b0b0;">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')" href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-          <p><%= dataallpObj[i].name%></p>
-        </div>
-      <% }} %>
-    </div>
+      <%- include ("./component/sidebar.ejs") -%>
+      <div><h1><%= nameRasPi %></h1><h4>Rasberry Pi</h4></div>
+      <br />
   </body>
 </html>

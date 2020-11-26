@@ -40,11 +40,17 @@
         <img src="/img/addpage.png" alt="addpagesymbol" />
       </div>
       <% for(let i = 0; i < dataaddpObj.length; i++){ %>
-        <div class="listproject">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')" href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
-          <p><%= dataaddpObj[i].name %></p>
-        </div>
-      <% } %>
+        <% if(dataaddpObj[i].status) {%>
+          <div class="listproject">
+            <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')" href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
+            <p><%= dataaddpObj[i].name %></p>
+          </div>
+      <% }else{ %>
+          <div class="listproject" style="border-color: #b0b0b0;background-color: #b0b0b0;">
+            <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')" href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
+            <p><%= dataaddpObj[i].name %></p>
+          </div>      
+      <% }} %>
     </div>
 
     <!-- Modal for add -->
@@ -62,7 +68,7 @@
               <div class="form-group">
                 <label for="InputName">Name</label>
                 <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp" required>
-                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                <small id="alertname" class="form-text text-muted"></small>
               </div>
               <div class="form-group">
                 <label for="InputDescripRas">Descript</label>
@@ -76,37 +82,11 @@
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               <button type="submit" class="btn btn-primary">Submit</button>                
               </right>
-              <!-- <div><br /></div> -->
             </form>
           </div>
-          <!-- <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Done</button>
-          </div> -->
         </div>
       </div>
     </div>
 
   </body>
 </html>
-
-<!-- Modal -->
-<!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Delete</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        Are you sure to delete it?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Yes</button>
-      </div>
-    </div>
-  </div>
-</div> -->

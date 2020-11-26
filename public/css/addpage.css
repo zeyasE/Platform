@@ -7,18 +7,23 @@
 .listproject {
   height: 9.5em;
   width: 15em;
-  border: solid;
+  border-style: solid;
   margin: 1em;
   justify-content: center;
   align-items: center;
   display: flex;
   position: relative;
+  border-color: rgb(110, 110, 110);
+  /* background-color: #b0b0b0;
+  border-color: #b0b0b0; */
 }
 
 #addsymbol {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-color: rgb(102, 102, 102);
+  background-color: white;
 }
 
 /* .container-flex div p {
@@ -38,8 +43,8 @@
 
 .closebutton:hover {
   text-decoration: none;
-  color: black;
-  opacity: 50%;
+  color: rgba(0, 0, 0, 0.596);
+  opacity: 75%;
 }
 
 .container-flex img {

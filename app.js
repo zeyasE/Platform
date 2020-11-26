@@ -9,6 +9,8 @@ const allProject = require("./controllers/allProject.js");
 const dataUser = require("./models/datauser.js");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const axios = require("axios");
+const setting = require("./settings.js");
 const uri =
   "mongodb+srv://iwing:iwingku77@cluster0.3abk6.mongodb.net/iwing?retryWrites=true&w=majority";
 // const MongoClient = require("mongodb").MongoClient;
@@ -23,10 +25,10 @@ app.use(express.json());
 
 app.post("/apipost", async (req, res) => {
   try {
-  const payload = req.body;
-  const datauser = new dataUser(payload);
-  await datauser.save();
-  res.status(201).end();
+    const payload = req.body;
+    const datauser = new dataUser(payload);
+    await datauser.save();
+    res.status(201).end();
   } catch (error) {
     res.status(404).send(error);
   }
@@ -34,18 +36,21 @@ app.post("/apipost", async (req, res) => {
 
 app.post("/apipost/raspi", async (req, res) => {
   try {
-  const datauser = new dataUser({
-    name: req.body.nameraspi,
-    type: "Raspberry",
-    userId: "Test",
-    descrip: req.body.descripraspi ,
-    dconnect: "none" 
-  });
-  await datauser.save();
-  // res.status(201).end();
-  res.redirect(req.get('referer'));
+    const datauser = new dataUser({
+      name: req.body.nameraspi,
+      type: "Raspberry",
+      userId: "Test",
+      descrip: req.body.descripraspi ,
+      dconnect: "none" 
+    });
+    await datauser.save();
+    // res.status(201).end();
+    res.redirect(req.get('referer'));
   } catch (error) {
-    res.status(404).send(error);
+      res.status(202).send(`<p>Sorry this name is used.<p>`);
+
+      // const errname = 'Sorry this name is used.';
+      // res.status(200).render("addnregister.ejs", { errname : errname})
   }
 });
 
@@ -81,25 +86,52 @@ app.get("/apidelete/:name", async (req, res) => {
 });
 
 // test get find
+// get all raspi&iot
 app.get("/apiget", async (req, res) => {
   const datauser = await dataUser.find();
   res.json(datauser);
 });
+// get only about this name
 app.get("/apiget/n/:name", async (req, res) => {
   const { name } = req.params;
   const datauser = await dataUser.findOne({ name:name });
   res.json(datauser);
 });
+// get all that type
 app.get("/apiget/t/:type", async (req, res) => {
   const { type } = req.params;
   const datauser = await dataUser.find({ type: type });
   res.json(datauser);
 });
+// get all iot that connect to this raspi
+app.get("/apiget/sr/:name", async (req, res) => {
+  const { name } = req.params;
+  const idRasPi = await dataUser.findOne({ name: name });
+  const datauser = await dataUser.find( {dconnect: idRasPi["_id"]} )
+  res.json(datauser);
+});
 
-app.get("/selectraspi/:name");
+app.get("/selectraspi/:name", async (req,res,next) => {
+  try {
+    const { name } = req.params;
+    const idRasPi = await dataUser.findOne({ name:name });
+    const datauser = await dataUser.find( {dconnect: idRasPi["_id"]} )
+    res.status(200).render("selectraspi.ejs", { dataRasPiObj: dataUser, nameRasPi: name})
+  } catch (error) {
+    res.status(404).send(error);
+  }
+  // const noRasPi = await axios
+  // .get(`${setting.apiURLselectRasPi}/${name}`)
+  // .then(res => {
+  //   return res.data;
+  // })
+  // .catch(err => { 
+  //   res.status(404).send(err)
+  // })
+  // res.status(200).send(noRasPi)
+});
 
 app.get("/selectiot/:name");
-
 app.get("/add", addnRegister);
 app.get("/all", allProject);
 app.get("/", mainController);
