@@ -9,7 +9,19 @@
   /* overflow-x: hidden; */
   overflow: auto;
   padding-top: 20px; /* Place content 60px from the top */
-  /* transition: 0.3s; */
+  transition: 0.3s;
+}
+
+.controlside div {
+  display: inline-flex;
+  align-items: flex-start;
+  position: initial;
+  width: 100px;
+  font-size: 20px;
+}
+
+#add1 {
+  display: none;
 }
 
 .sidenav a {

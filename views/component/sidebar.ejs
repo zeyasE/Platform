@@ -1,18 +1,17 @@
 <script>
-  var click = true;
+  let click = true;
   function openandcloseNav() {
     if (click === true) {
       document.getElementById("mySidenav").style.width = "250px";
-      document.getElementById("add1").innerHTML += "Add";
+      document.getElementById("add1").style.display = "block";
       document.getElementById("all2").innerHTML += "All";
       document.getElementById("input3").innerHTML += "Input";
       document.getElementById("output4").innerHTML += "Output";
-      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.2)";
       click = false;
     } else {
       document.getElementById("mySidenav").style.width = "90px";
-      document.getElementById("add1").innerHTML =
-        '<img src="/img/add.png" alt="AddDevice" />';
+      document.getElementById("add1").style.display = "none";
       document.getElementById("all2").innerHTML =
         '<img src="/img/project.png" alt="AddDevice" />';
       document.getElementById("input3").innerHTML =
@@ -30,12 +29,17 @@
       ><img src="/img/menu.png" alt="burgermenu"
     /></a>
   </div>
-  <div>
-    <a href="/add" id="add1"><img src="/img/add.png" alt="plussymbol" /></a>
+  <div class="controlside">
+    <div>
+      <a href="/add"><img src="/img/add.png" alt="plussymbol" /></a>
+    </div>
+    <div id="add1">
+      <a>Add</a>  
+    </div>
   </div>
   <div>
     <a href="/all" id="all2"
-      ><img src="/img/project.png" alt="documentsymbol"
+      ><img src="/img/icons8.png" alt="documentsymbol"
     /></a>
   </div>
   <div>
@@ -43,7 +47,7 @@
   </div>
   <div>
     <a href="#4" id="output4"
-      ><img src="/img/output.png" alt="outputsymbol"
+      ><img src="/img/outgoing.png" alt="outputsymbol"
     /></a>
   </div>
 </div>
