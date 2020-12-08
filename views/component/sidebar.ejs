@@ -4,50 +4,58 @@
     if (click === true) {
       document.getElementById("mySidenav").style.width = "250px";
       document.getElementById("add1").style.display = "block";
-      document.getElementById("all2").innerHTML += "All";
-      document.getElementById("input3").innerHTML += "Input";
-      document.getElementById("output4").innerHTML += "Output";
+      document.getElementById("all2").style.display = "block";
+      document.getElementById("input3").style.display = "block";
+      document.getElementById("output4").style.display = "block";
       document.body.style.backgroundColor = "rgba(0,0,0,0.2)";
       click = false;
     } else {
       document.getElementById("mySidenav").style.width = "90px";
       document.getElementById("add1").style.display = "none";
-      document.getElementById("all2").innerHTML =
-        '<img src="/img/project.png" alt="AddDevice" />';
-      document.getElementById("input3").innerHTML =
-        '<img src="/img/input.png" alt="AddDevice" />';
-      document.getElementById("output4").innerHTML =
-        '<img src="/img/output.png" alt="AddDevice" />';
+      document.getElementById("all2").style.display = "none";
+      document.getElementById("input3").style.display = "none";
+      document.getElementById("output4").style.display = "none";
       document.body.style.backgroundColor = "white";
       click = true;
     }
   }
 </script>
 <div id="mySidenav" class="sidenav">
-  <div>
+  <div class="controlside">
     <a href="javascript:void(0)" class="closebtn" onclick="openandcloseNav()"
       ><img src="/img/menu.png" alt="burgermenu"
     /></a>
   </div>
-  <div class="controlside">
+  <div class="controlside" onclick="location.href='/add';">
     <div>
-      <a href="/add"><img src="/img/add.png" alt="plussymbol" /></a>
+      <a><img src="/img/add.png" alt="plussymbol" /></a>
     </div>
     <div id="add1">
       <a>Add</a>  
     </div>
   </div>
-  <div>
-    <a href="/all" id="all2"
-      ><img src="/img/icons8.png" alt="documentsymbol"
-    /></a>
+  <div class="controlside" onclick="location.href='/all';">
+    <div>
+      <a href="/all"><img src="/img/icons8.png" alt="documentsymbol"/></a>      
+    </div>
+    <div id="all2">
+      <a>All</a>
+    </div>
   </div>
-  <div>
-    <a href="#3" id="input3"><img src="/img/input.png" alt="inputsymbol" /></a>
+  <div class="controlside" onclick="location.href='#3';">
+    <div>
+      <a><img src="/img/bar-chart.png" alt="inputsymbol" /></a>
+    </div>
+    <div id="input3">
+      <a>Chart</a>
+    </div>
   </div>
-  <div>
-    <a href="#4" id="output4"
-      ><img src="/img/outgoing.png" alt="outputsymbol"
-    /></a>
+  <div class="controlside" onclick="location.href='#4';">
+    <div>
+      <a href="#4"><img src="/img/outgoing.png" alt="outputsymbol"/></a>
+    </div>
+    <div id="output4">
+      <a>Control</a>
+    </div>
   </div>
 </div>
