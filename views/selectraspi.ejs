@@ -1,39 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <title>Welcome</title> -->
-    <link type="text/css" rel="stylesheet" href="/css/component-sidebar.css" />
-    <link type="text/css" rel="stylesheet" href="/css/addpage.css" />
-    <link type="text/css" rel="stylesheet" href="/css/body.css" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-      crossorigin="anonymous"
-    />
 
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
-      <%- include ("./component/sidebar.ejs") -%>
-      <div><h1><%= nameRasPi %></h1><h4>Rasberry Pi</h4></div>
-      <br />
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- <title>Welcome</title> -->
+  <link type="text/css" rel="stylesheet" href="/css/component-sidebar.css" />
+  <link type="text/css" rel="stylesheet" href="/css/addpage.css" />
+  <link type="text/css" rel="stylesheet" href="/css/body.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <%- include ("./component/sidebar.ejs") -%>
+  <div>
+    <h1><%= nameRasPi %></h1>
+  </div>
+  <br />
+  <div class="container-flex">
+    <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddIotModal">
+      <img src="/img/addpage.png" alt="addiotsymbol" />
+    </div>
+    <% for(let i = 0; i < dataRasPiObj.length; i++) { %>
+    <% if(dataRasPiObj[i].status) { %>
+    <div class="listproject">
+      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+        href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+      <p><%= dataRasPiObj[i].name %></p>
+    </div>
+    <% }else{ %>
+    <div class="listproject"
+      style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+        href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+      <p><%= dataRasPiObj[i].name %></p>
+    </div>
+    <% }} %>
+  </div>
+
+  <!-- Modal for add iot device-->
+  <div class="modal fade" id="AddIotModal" tabindex="-1" aria-labelledby="AddIotModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Add Iot Device</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/apipost/<%= nameRasPi %>/iot" method="POST">
+            <div class="form-group">
+              <label for="InputName">Name</label>
+              <input type="text" name="nameiot" class="form-control" id="nameiot" aria-describedby="nameHelp" required>
+              <small id="alertname" class="form-text text-muted"></small>
+            </div>
+            <div class="form-group">
+              <label for="InputDescripRas">Descript</label>
+              <textarea class="form-control" name="descripiot" id="descripiot" rows="3" required></textarea>
+            </div>
+            <!-- <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div> -->
+            <right>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </right>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
 </html>

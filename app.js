@@ -11,6 +11,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const axios = require("axios");
 const setting = require("./settings.js");
+const { find } = require("./models/datauser.js");
 const uri =
   "mongodb+srv://iwing:iwingku77@cluster0.3abk6.mongodb.net/iwing?retryWrites=true&w=majority";
 // const MongoClient = require("mongodb").MongoClient;
@@ -34,25 +35,46 @@ app.post("/apipost", async (req, res) => {
   }
 });
 
+// create raspi
 app.post("/apipost/raspi", async (req, res) => {
   try {
     const datauser = new dataUser({
       name: req.body.nameraspi,
       type: "Raspberry",
       userId: "Test",
-      descrip: req.body.descripraspi ,
-      dconnect: "none" 
+      descrip: req.body.descripraspi,
+      dconnect: "none"
     });
     await datauser.save();
-    // res.status(201).end();
     res.redirect(req.get('referer'));
   } catch (error) {
-      res.status(202).send(`<p>Sorry this name is used.<p>`);
+    res.status(202).send(`<p>Sorry this name is used.<p>`);
 
-      // const errname = 'Sorry this name is used.';
-      // res.status(200).render("addnregister.ejs", { errname : errname})
+    // const errname = 'Sorry this name is used.';
+    // res.status(200).render("addnregister.ejs", { errname : errname})
   }
 });
+
+// create iot
+app.post("/apipost/:nameras/iot", async (req, res) => {
+  try {
+    const { nameras } = req.params;
+    if (nameras === null)
+      res.status(404).end();
+    const raspdata = await dataUser.findOne({ name: nameras });
+    const datauser = new dataUser({
+      name: req.body.nameiot,
+      type: "device",
+      userid: "Test",
+      descrip: req.body.descripiot,
+      dconnect: raspdata["_id"]
+    });
+    await datauser.save();
+    res.redirect(req.get('referer'));
+  } catch {
+    res.status(202).send(`<p>Sorry this name is used.<p>`);
+  }
+})
 
 app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
@@ -72,15 +94,15 @@ app.put("/apiput/:namedevice", async (req, res) => {
 //reserve => apidelete
 app.delete("/testapidelete/:name", async (req, res) => {
   const name = req.params.name;
-  const datauser = await dataUser.findOneAndRemove( { name: name});
+  const datauser = await dataUser.findOneAndRemove({ name: name });
   res.sendStatus(204).send();
 });
 
 //main => apidelete
 app.get("/apidelete/:name", async (req, res) => {
   const name = req.params.name;
-  const datauser = await dataUser.findOneAndRemove( { name: name}, (err,doc) => {
-    if(err) console.error(err);
+  const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
+    if (err) console.error(err);
     res.redirect(req.get('referer'));
   });
 });
@@ -94,7 +116,7 @@ app.get("/apiget", async (req, res) => {
 // get only about this name
 app.get("/apiget/n/:name", async (req, res) => {
   const { name } = req.params;
-  const datauser = await dataUser.findOne({ name:name });
+  const datauser = await dataUser.findOne({ name: name });
   res.json(datauser);
 });
 // get all that type
@@ -107,16 +129,16 @@ app.get("/apiget/t/:type", async (req, res) => {
 app.get("/apiget/sr/:name", async (req, res) => {
   const { name } = req.params;
   const idRasPi = await dataUser.findOne({ name: name });
-  const datauser = await dataUser.find( {dconnect: idRasPi["_id"]} )
+  const datauser = await dataUser.find({ dconnect: idRasPi["_id"] })
   res.json(datauser);
 });
 
-app.get("/selectraspi/:name", async (req,res,next) => {
+app.get("/selectraspi/:name", async (req, res, next) => {
   try {
     const { name } = req.params;
-    const idRasPi = await dataUser.findOne({ name:name });
-    const datauser = await dataUser.find( {dconnect: idRasPi["_id"]} )
-    res.status(200).render("selectraspi.ejs", { dataRasPiObj: dataUser, nameRasPi: name})
+    const idRasPi = await dataUser.findOne({ name: name });
+    const datauser = await dataUser.find({ dconnect: idRasPi["_id"] });
+    res.status(200).render("selectraspi.ejs", { dataRasPiObj: datauser, nameRasPi: name });
   } catch (error) {
     res.status(404).send(error);
   }
