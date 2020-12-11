@@ -26,23 +26,38 @@
 <body>
   <%- include ("./component/sidebar.ejs") -%>
   <div>
-    <h1>All Iot Devices</h1>
+    <h1>Select Iot Devices</h1>
   </div>
   <br />
   <div class="container-flex">
     <% for(let i=0; i < dataallpObj.length; i++) { %>
     <% if (dataallpObj[i].status) { %>
     <div class="listproject">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
-        href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-      <p><%= dataallpObj[i].name%></p>
+      <div class="listpro-card">
+        <div class="listpro-front">
+          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+            href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
+          <p><%= dataallpObj[i].name%></p>
+        </div>
+        <div class="listpro-back">
+          <p><%= dataallpObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
     <% }else{ %>
-    <div class="listproject"
-      style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
-        href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-      <p><%= dataallpObj[i].name%></p>
+    <div class="listproject">
+      <div class="listpro-card">
+        <div class="listpro-front"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+            href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
+          <p><%= dataallpObj[i].name%></p>
+        </div>
+        <div class="listpro-back"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <p><%= dataallpObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
     <% }} %>
   </div>

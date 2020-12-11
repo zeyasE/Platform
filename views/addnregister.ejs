@@ -36,18 +36,38 @@
     <% for(let i = 0; i < dataaddpObj.length; i++){ %>
     <% if(dataaddpObj[i].status) {%>
     <div class="listproject">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-        href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
-      <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv> -->
-      <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].name %></p>
+      <div class="listpro-card">
+        <div class="listpro-front">
+          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+            href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
+          <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv> -->
+          <p id="namedevice">
+            <%= dataaddpObj[i].name %>
+          </p>
+        </div>
+        <div class="listpro-back">
+          <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
+
     <% }else{ %>
-    <div class="listproject"
-      style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-        href="/apidelete/<%= dataaddpObj[i].name %>">&times;</a>
-      <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv>  -->
-      <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].name %></p>
+    <div class="listproject">
+      <div class="listpro-card">
+        <div class="listpro-front"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+            href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
+          <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv>  -->
+          <p id="namedevice" onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+            <%= dataaddpObj[i].name %>
+          </p>
+        </div>
+        <div class="listpro-back"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
     <% }} %>
   </div>

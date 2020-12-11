@@ -36,16 +36,33 @@
     <% for(let i = 0; i < dataRasPiObj.length; i++) { %>
     <% if(dataRasPiObj[i].status) { %>
     <div class="listproject">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
-        href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
-      <p><%= dataRasPiObj[i].name %></p>
+      <div class="listpro-card">
+        <div class="listpro-front">
+          <a class="closebutton"
+            onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+          <p><%= dataRasPiObj[i].name %></p>
+        </div>
+        <div class="listpro-back">
+          <p><%= dataRasPiObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
     <% }else{ %>
-    <div class="listproject"
-      style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-      <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
-        href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
-      <p><%= dataRasPiObj[i].name %></p>
+    <div class="listproject">
+      <div class="listpro-card">
+        <div class="listpro-front"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <a class="closebutton"
+            onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+          <p><%= dataRasPiObj[i].name %></p>
+        </div>
+        <div class="listpro-back"
+          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+          <p><%= dataRasPiObj[i].descrip %></p>
+        </div>
+      </div>
     </div>
     <% }} %>
   </div>

@@ -5,24 +5,87 @@
 
 .listproject {
   height: 9.5em;
-  width: 15em;
-  margin: 1em;
-  justify-content: center;
+  width: 15.3em;
+  margin: 0.8em;
+  /* justify-content: center;
   align-items: center;
   display: flex;
-  position: relative;
+  position: relative; */
+  perspective: 1000px;
+  background-color:transparent;
+}
+
+.listpro-card {
   border-style: solid;
   border-color: rgba(110, 110, 110, 0.76);
   border-radius: 1em;
-  /* background-color: #b0b0b0;
-  border-color: #b0b0b0; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  perspective: 1000px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
 }
+
+.listproject:hover .listpro-card {
+  transform: rotateY(180deg);
+}
+
+.listpro-front, .listpro-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: visible;
+  border-radius: 1em;
+}
+
+.listpro-back {
+  transform: rotateY(180deg);
+}
+
+.listpro-back p {
+  padding: 0px 10px 0px 10px;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+#namedevice {
+  font-size: 1.2em;
+}
+
+/* #namedevice:hover {
+  font-size: 1.4em;
+  -webkit-animation: moving 3s;
+  animation: moving 3s;
+}
+
+@-webkit-keyframes moving {
+  form {-webkit-transform: translateY(0px);}
+  to {-webkit-transform: translateY(-35px);}
+}
+
+@keyframes moving {
+  from {transform: translateY(0px);}
+  to {transform: translateY(-35px);}
+} */
 
 #addsymbol {
   display: flex;
   justify-content: center;
   align-items: center;
   border-color: rgb(110, 110, 110, 0.76);
+  border-style: solid;
+  border-radius: 1em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 /* .container-flex div p {
@@ -61,11 +124,4 @@ h1 {
   padding: 4px;
   font: bold 1.5em verdana;
   border-bottom: 1px solid #000;
-}
-
-right {
-  display: inline;
-  line-height: 3.5em;
-  position: relative;
-  margin-left: 68%;
 }

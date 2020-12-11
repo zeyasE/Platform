@@ -100,12 +100,27 @@ app.delete("/testapidelete/:name", async (req, res) => {
 
 //main => apidelete
 app.get("/apidelete/:name", async (req, res) => {
-  const name = req.params.name;
-  const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
-    if (err) console.error(err);
-    res.redirect(req.get('referer'));
-  });
+  try {
+    const name = req.params.name;
+    const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
+      if (err) console.error(err);
+      res.redirect(req.get('referer'));
+    });
+  } catch (error) {
+    res.status(404).send(error);
+  }
 });
+app.get("/apidelete/ras/:name", async (req, res) => {
+  try {
+    const name = req.params.name;
+    const idraspi = await dataUser.findOne({ name: name });
+    const devices = await dataUser.deleteMany({ dconnect: idraspi["_id"] });
+    const deleteraspi = await dataUser.findOneAndRemove({ name: name });
+    res.redirect(req.get('referer'));
+  } catch (error) {
+    res.status(404).send(error);
+  }
+})
 
 // test get find
 // get all raspi&iot
