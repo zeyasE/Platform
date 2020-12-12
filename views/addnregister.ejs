@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
@@ -25,89 +26,105 @@
 
 <body>
   <%- include ("./component/sidebar.ejs") -%>
-  <div>
-    <h1>Add Project</h1>
-  </div>
-  <br />
-  <div class="container-flex">
-    <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddProjectModal">
-      <img src="/img/addpage.png" alt="addpagesymbol" />
+    <div>
+      <h1>Add Project</h1>
     </div>
-    <% for(let i = 0; i < dataaddpObj.length; i++){ %>
-    <% if(dataaddpObj[i].status) {%>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-            href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
-          <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv> -->
-          <p id="namedevice">
-            <%= dataaddpObj[i].name %>
-          </p>
-        </div>
-        <div class="listpro-back">
-          <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].descrip %></p>
-        </div>
+    <br />
+    <div class="container-flex" id="listproject">
+      <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddProjectModal">
+        <img src="/img/addpage.png" alt="addpagesymbol" />
       </div>
-    </div>
-
-    <% }else{ %>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-            href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
-          <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv>  -->
-          <p id="namedevice" onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
-            <%= dataaddpObj[i].name %>
-          </p>
-        </div>
-        <div class="listpro-back"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';"><%= dataaddpObj[i].descrip %></p>
-        </div>
-      </div>
-    </div>
-    <% }} %>
-  </div>
-
-  <!-- Modal for add -->
-  <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">Add Raspberry</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form action="/apipost/raspi" method="POST">
-            <div class="form-group">
-              <label for="InputName">Name</label>
-              <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
-                required>
-              <small id="alertname" class="form-text text-muted"></small>
+      <% for(let i=0; i < dataaddpObj.length; i++){ %>
+        <% if(dataaddpObj[i].status) {%>
+          <div class="listproject">
+            <div class="listpro-card">
+              <div class="listpro-front">
+                <a class="closebutton"
+                  onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+                  href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
+                <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv> -->
+                <p id="namedevice">
+                  <%= dataaddpObj[i].name %>
+                </p>
+              </div>
+              <div class="listpro-back">
+                <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+                  <%= dataaddpObj[i].descrip %>
+                </p>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="InputDescripRas">Descript</label>
-              <textarea class="form-control" name="descripraspi" id="descripraspi" rows="3" required></textarea>
+          </div>
+
+          <% }else{ %>
+            <div class="listproject">
+              <div class="listpro-card">
+                <div class="listpro-front"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <a class="closebutton"
+                    onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+                    href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
+                  <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv>  -->
+                  <p id="namedevice" onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+                    <%= dataaddpObj[i].name %>
+                  </p>
+                </div>
+                <div class="listpro-back"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+                    <%= dataaddpObj[i].descrip %>
+                  </p>
+                </div>
+              </div>
             </div>
-            <!-- <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-              </div> -->
-            <right>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </right>
-          </form>
+            <% }} %>
+    </div>
+
+    <!-- Modal for add -->
+    <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Add Raspberry</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="formraspi">
+              <!-- method="POST" id="formraspi" -->
+              <div class="form-group">
+                <label for="InputName">Name</label>
+                <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
+                  required>
+                <small id="alertname" class="form-text text-muted">
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="InputDescripRas">Descript</label>
+                <textarea class="form-control" name="descripraspi" id="descripraspi" rows="3" required></textarea>
+              </div>
+              <right>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </right>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+    <script>
+      $('#formraspi').submit((e) => {
+        e.preventDefault();
+        $.ajax({
+          url: '/apipost/raspi',
+          type: 'POST',
+          dataType: JSON,
+          success: () => { console.log("succes") },
+          error: () => { console.log("lost") },
+        });
+      });
+    </script>
 </body>
 
 </html>

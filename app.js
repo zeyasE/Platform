@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const port = process.env.port || 3000;
 const path = require("path");
+const { JSDOM } = require("jsdom");
+const { window } = new JSDOM("");
+const $ = require("jquery")(window);
 const pageNotFoundController = require("./controllers/page-not-found-controller.js");
 const mainController = require("./controllers/main-controller.js");
 const addnRegister = require("./controllers/addnregister-controller.js");
@@ -12,6 +15,7 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 const setting = require("./settings.js");
 const { find } = require("./models/datauser.js");
+const { reset } = require("nodemon");
 const uri =
   "mongodb+srv://iwing:iwingku77@cluster0.3abk6.mongodb.net/iwing?retryWrites=true&w=majority";
 // const MongoClient = require("mongodb").MongoClient;
@@ -37,6 +41,7 @@ app.post("/apipost", async (req, res) => {
 
 // create raspi
 app.post("/apipost/raspi", async (req, res) => {
+  var message;
   try {
     const datauser = new dataUser({
       name: req.body.nameraspi,
@@ -46,12 +51,16 @@ app.post("/apipost/raspi", async (req, res) => {
       dconnect: "none"
     });
     await datauser.save();
-    res.redirect(req.get('referer'));
+    // res.redirect(req.get('referer'));
+    // $("#formraspi").submit((e) => {
+    //   e.preventDefault();
+    // })
+    // $("#listproject").load(window.location.href + " #listproject");
   } catch (error) {
-    res.status(202).send(`<p>Sorry this name is used.<p>`);
-
-    // const errname = 'Sorry this name is used.';
-    // res.status(200).render("addnregister.ejs", { errname : errname})
+    message = "Sorry this name is used.";
+    // res.status(200).render("/apipost/raspi", { err: message });
+    // res.status(404).send(message);
+    // $("#alertname").append(message);
   }
 });
 

@@ -119,6 +119,17 @@
   width: 2.5em;
 }
 
+/* sumbit button */
+right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: right;
+}
+
+right button {
+  margin: 5px;
+}
+
 h1 {
   margin: 0;
   padding: 4px;
