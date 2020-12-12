@@ -51,7 +51,7 @@ app.post("/apipost/raspi", async (req, res) => {
       dconnect: "none"
     });
     await datauser.save();
-    // res.redirect(req.get('referer'));
+    res.redirect(req.get('referer'));
     // $("#formraspi").submit((e) => {
     //   e.preventDefault();
     // })
