@@ -23,9 +23,10 @@
 </head>
 
 <body>
+
   <%- include ("./component/sidebar.ejs") -%>
     <div>
-      <h1>Add Project</h1>
+      <h1>Add Raspberry Pi</h1>
     </div>
     <br />
     <div class="container-flex" id="listproject">
@@ -37,15 +38,14 @@
           <div class="listproject">
             <div class="listpro-card">
               <div class="listpro-front">
-                <a class="closebutton"
-                  onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-                  href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
-                <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv> -->
                 <p id="namedevice">
                   <%= dataaddpObj[i].name %>
                 </p>
               </div>
               <div class="listpro-back">
+                <a class="closebutton"
+                  onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+                  href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
                 <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
                   <%= dataaddpObj[i].descrip %>
                 </p>
@@ -58,16 +58,15 @@
               <div class="listpro-card">
                 <div class="listpro-front"
                   style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <a class="closebutton"
-                    onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-                    href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
-                  <!-- <div class="closebutton" data-toggle="modal" data-target="#AddProjectModal"></dv>  -->
                   <p id="namedevice" onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
                     <%= dataaddpObj[i].name %>
                   </p>
                 </div>
                 <div class="listpro-back"
                   style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <a class="closebutton"
+                    onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
+                    href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
                   <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
                     <%= dataaddpObj[i].descrip %>
                   </p>
@@ -75,10 +74,15 @@
               </div>
             </div>
             <% }} %>
+              <!-- <form>
+                <input type="text" id="test">
+                <button type="submit" id="testtext">Ok</button>
+              </form> -->
+
     </div>
 
-    <!-- Modal for add -->
-    <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
+    <!-- Modal for add old-->
+    <!-- <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -90,7 +94,6 @@
           </div>
           <div class="modal-body">
             <form id="formraspi" method="POST" action="/apipost/raspi">
-              <!-- method="POST" action="/apipost/raspi" -->
               <div class="form-group">
                 <label for="InputName">Name</label>
                 <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
@@ -110,19 +113,76 @@
           </div>
         </div>
       </div>
+    </div> -->
+
+    <!-- Modal for add old-->
+    <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Add Raspberry</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="formraspi" action="">
+              <!-- method="POST" action="/apipost/raspi" -->
+              <div class="form-group">
+                <label for="InputName">Name</label>
+                <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
+                  required>
+                <small id="alertname" class="form-text text-muted">
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="InputDescripRas">Descript</label>
+                <textarea class="form-control" name="descripraspi" id="descripraspi" rows="3" required></textarea>
+              </div>
+              <small id="alertdes" class="form-text text-muted">
+              </small>
+              <right>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+              </right>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- <script>
-      $('#submit').on('submit', (e) => {
-        e.preventDefault();
-        $.ajax({
-          url: '/add',
-          method: 'POST',
-          dataType: 'json',
-          success: () => { console.log("succes") },
-          error: () => { console.log("lost") },
+    <script>
+      // $(document).ready(() => {
+      //   $('#testtext').click((e) => {
+      //     e.preventDefault();
+      //     alert($("#test").val());;
+      //   })
+      // })
+      $(document).ready(() => {
+        $("#submit").click((e) => {
+          e.preventDefault();
+          $("#alertname").empty();
+          $("#alertdes").empty();
+          if ($("#nameraspi").val() === "") {
+            $("#alertname").append("please full fill name.")
+          } else if ($("#descripraspi").val() === "") {
+            $("#alertdes").append("plese full fill descrip")
+          } else {
+            $.ajax({
+              url: '/apipost/raspi',
+              type: 'POST',
+              data: ({ nameraspi: $("#nameraspi").val(), descripraspi: $("#descripraspi").val() }),
+              success: (suc) => { alert("already"); },
+              error: (err) => {
+                $("#alertname").append(err.responseJSON.err.errors.name.message);
+                console.log(err.responseJSON.err.errors.name.message);
+              }
+            })
+          }
+
         })
       })
-    </script> -->
+    </script>
 </body>
 
 </html>

@@ -25,42 +25,57 @@
 
 <body>
   <%- include ("./component/sidebar.ejs") -%>
-  <div>
-    <h1>Select Iot Devices</h1>
-  </div>
-  <br />
-  <div class="container-flex">
-    <% for(let i=0; i < dataallpObj.length; i++) { %>
-    <% if (dataallpObj[i].status) { %>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
-            href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-          <p><%= dataallpObj[i].name%></p>
-        </div>
-        <div class="listpro-back">
-          <p><%= dataallpObj[i].descrip %></p>
-        </div>
-      </div>
+    <div>
+      <h1>Select Iot Devices</h1>
     </div>
-    <% }else{ %>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
-            href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
-          <p><%= dataallpObj[i].name%></p>
-        </div>
-        <div class="listpro-back"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <p><%= dataallpObj[i].descrip %></p>
-        </div>
-      </div>
+    <br />
+    <div class="container-flex">
+      <% for(let i=0; i < dataallpObj.length; i++) { %>
+        <% if (dataallpObj[i].status) { %>
+          <div class="listproject">
+            <div class="listpro-card">
+              <div class="listpro-front">
+                <!-- <a class="closebutton"
+                  onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+                  href="/apidelete/<%= dataallpObj[i].name %>">&times;</a> -->
+                <p>
+                  <%= dataallpObj[i].name%>
+                </p>
+              </div>
+              <div class="listpro-back">
+                <a class="closebutton"
+                  onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+                  href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
+                <p onclick="location.href='/dashboard/<%= dataallpObj[i].name %>'">
+                  <%= dataallpObj[i].descrip %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <% }else{ %>
+            <div class="listproject">
+              <div class="listpro-card">
+                <div class="listpro-front"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <!-- <a class="closebutton" onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+            href="/apidelete/<%= dataallpObj[i].name %>">&times;</a> -->
+                  <p>
+                    <%= dataallpObj[i].name%>
+                  </p>
+                </div>
+                <div class="listpro-back"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <a class="closebutton"
+                    onclick="return confirm('Are you sure you want to Delete <%= dataallpObj[i].name %>?')"
+                    href="/apidelete/<%= dataallpObj[i].name %>">&times;</a>
+                  <p onclick="location.href='/dashboard/<%= dataallpObj[i].name %>'">
+                    <%= dataallpObj[i].descrip %>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <% }} %>
     </div>
-    <% }} %>
-  </div>
 </body>
 
 </html>

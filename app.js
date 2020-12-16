@@ -51,13 +51,13 @@ app.post("/apipost/raspi", async (req, res) => {
       dconnect: "none"
     });
     await datauser.save();
-    res.redirect(req.get('referer'));
+    // res.redirect(`/selectraspi/${req.body.nameraspi}`);
     // $("#formraspi").submit((e) => {
     //   e.preventDefault();
     // })
     // $("#listproject").load(window.location.href + " #listproject");
-  } catch (error) {
-    message = "Sorry this name is used.";
+  } catch (err) {
+    res.status(404).send({ err });
     // res.status(200).render("/apipost/raspi", { err: message });
     // res.status(404).send(message);
     // $("#alertname").append(message);
@@ -176,6 +176,15 @@ app.get("/selectraspi/:name", async (req, res, next) => {
   // })
   // res.status(200).send(noRasPi)
 });
+
+app.get("/dashboard/:name", async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    res.status(200).render("iotdev.ejs", { nameiotdev: name });
+  } catch (error) {
+    res.status(404).send(error);
+  }
+})
 
 app.get("/selectiot/:name");
 app.get("/add", addnRegister);

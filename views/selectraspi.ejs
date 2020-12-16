@@ -25,82 +25,99 @@
 
 <body>
   <%- include ("./component/sidebar.ejs") -%>
-  <div>
-    <h1><%= nameRasPi %></h1>
-  </div>
-  <br />
-  <div class="container-flex">
-    <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddIotModal">
-      <img src="/img/addpage.png" alt="addiotsymbol" />
+    <div>
+      <h1>
+        <%= nameRasPi %>
+      </h1>
     </div>
-    <% for(let i = 0; i < dataRasPiObj.length; i++) { %>
-    <% if(dataRasPiObj[i].status) { %>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front">
-          <a class="closebutton"
-            onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
-            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
-          <p><%= dataRasPiObj[i].name %></p>
-        </div>
-        <div class="listpro-back">
-          <p><%= dataRasPiObj[i].descrip %></p>
-        </div>
+    <br />
+    <div class="container-flex">
+      <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddIotModal">
+        <img src="/img/addpage.png" alt="addiotsymbol" />
       </div>
-    </div>
-    <% }else{ %>
-    <div class="listproject">
-      <div class="listpro-card">
-        <div class="listpro-front"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <a class="closebutton"
+      <% for(let i=0; i < dataRasPiObj.length; i++) { %>
+        <% if(dataRasPiObj[i].status) { %>
+          <div class="listproject">
+            <div class="listpro-card">
+              <div class="listpro-front">
+                <!-- <a class="closebutton"
             onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
-            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
-          <p><%= dataRasPiObj[i].name %></p>
-        </div>
-        <div class="listpro-back"
-          style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-          <p><%= dataRasPiObj[i].descrip %></p>
-        </div>
-      </div>
+            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a> -->
+                <p>
+                  <%= dataRasPiObj[i].name %>
+                </p>
+              </div>
+              <div class="listpro-back">
+                <a class="closebutton"
+                  onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+                  href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+                <p>
+                  <%= dataRasPiObj[i].descrip %>
+                </p>
+              </div>
+            </div>
+          </div>
+          <% }else{ %>
+            <div class="listproject">
+              <div class="listpro-card">
+                <div class="listpro-front"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <!-- <a class="closebutton"
+            onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+            href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a> -->
+                  <p>
+                    <%= dataRasPiObj[i].name %>
+                  </p>
+                </div>
+                <div class="listpro-back"
+                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
+                  <a class="closebutton"
+                    onclick="return confirm('Are you sure you want to Delete <%= dataRasPiObj[i].name %>?')"
+                    href="/apidelete/<%= dataRasPiObj[i].name %>">&times;</a>
+                  <p onclick="location.href='/dashboard/<%= dataRasPiObj[i].name %>'">
+                    <%= dataRasPiObj[i].descrip %>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <% }} %>
     </div>
-    <% }} %>
-  </div>
 
-  <!-- Modal for add iot device-->
-  <div class="modal fade" id="AddIotModal" tabindex="-1" aria-labelledby="AddIotModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="deleteModalLabel">Add Iot Device</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form action="/apipost/<%= nameRasPi %>/iot" method="POST">
-            <div class="form-group">
-              <label for="InputName">Name</label>
-              <input type="text" name="nameiot" class="form-control" id="nameiot" aria-describedby="nameHelp" required>
-              <small id="alertname" class="form-text text-muted"></small>
-            </div>
-            <div class="form-group">
-              <label for="InputDescripRas">Descript</label>
-              <textarea class="form-control" name="descripiot" id="descripiot" rows="3" required></textarea>
-            </div>
-            <!-- <div class="form-group form-check">
+    <!-- Modal for add iot device-->
+    <div class="modal fade" id="AddIotModal" tabindex="-1" aria-labelledby="AddIotModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Add Iot Device</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="/apipost/<%= nameRasPi %>/iot" method="POST">
+              <div class="form-group">
+                <label for="InputName">Name</label>
+                <input type="text" name="nameiot" class="form-control" id="nameiot" aria-describedby="nameHelp"
+                  required>
+                <small id="alertname" class="form-text text-muted"></small>
+              </div>
+              <div class="form-group">
+                <label for="InputDescripRas">Descript</label>
+                <textarea class="form-control" name="descripiot" id="descripiot" rows="3" required></textarea>
+              </div>
+              <!-- <div class="form-group form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                 <label class="form-check-label" for="exampleCheck1">Check me out</label>
               </div> -->
-            <right>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </right>
-          </form>
+              <right>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </right>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
 </body>
 
