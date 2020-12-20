@@ -43,9 +43,8 @@
                 </p>
               </div>
               <div class="listpro-back">
-                <a class="closebutton"
-                  onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-                  href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
+                <div class="closebutton" onclick="todeleteraspi(`<%= dataaddpObj[i].name %>`)">&times;
+                </div>
                 <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
                   <%= dataaddpObj[i].descrip %>
                 </p>
@@ -58,64 +57,22 @@
               <div class="listpro-card">
                 <div class="listpro-front"
                   style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <p id="namedevice" onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+                  <p id="namedevice">
                     <%= dataaddpObj[i].name %>
                   </p>
                 </div>
                 <div class="listpro-back"
                   style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <a class="closebutton"
-                    onclick="return confirm('Are you sure you want to Delete <%= dataaddpObj[i].name %>?')"
-                    href="/apidelete/ras/<%= dataaddpObj[i].name %>">&times;</a>
-                  <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
+                  <div class="closebutton" onclick="todeleteiot(`<%= dataaddpObj[i].name %>`)"> &times;</div>
+                  <p onclick=" location.href='/selectraspi/<%= dataaddpObj[i].name %>' ;">
                     <%= dataaddpObj[i].descrip %>
                   </p>
                 </div>
               </div>
             </div>
             <% }} %>
-              <!-- <form>
-                <input type="text" id="test">
-                <button type="submit" id="testtext">Ok</button>
-              </form> -->
-
     </div>
 
-    <!-- Modal for add old-->
-    <!-- <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">Add Raspberry</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="formraspi" method="POST" action="/apipost/raspi">
-              <div class="form-group">
-                <label for="InputName">Name</label>
-                <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
-                  required>
-                <small id="alertname" class="form-text text-muted">
-                </small>
-              </div>
-              <div class="form-group">
-                <label for="InputDescripRas">Descript</label>
-                <textarea class="form-control" name="descripraspi" id="descripraspi" rows="3" required></textarea>
-              </div>
-              <right>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-              </right>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- Modal for add old-->
     <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -144,13 +101,53 @@
               </small>
               <right>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" id="submit" class="btn btn-primary" data-dismiss="modal">Submit</button>
               </right>
             </form>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- confirm model -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="toglemessage">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="closedelete" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="Confirmdelete" data-dismiss="modal">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- error model -->
+    <div class="modal fade" id="errModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error to delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="errmessage">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       // $(document).ready(() => {
       //   $('#testtext').click((e) => {
@@ -158,6 +155,7 @@
       //     alert($("#test").val());;
       //   })
       // })
+      // add raspi process
       $(document).ready(() => {
         $("#submit").click((e) => {
           e.preventDefault();
@@ -172,16 +170,33 @@
               url: '/apipost/raspi',
               type: 'POST',
               data: ({ nameraspi: $("#nameraspi").val(), descripraspi: $("#descripraspi").val() }),
-              success: (suc) => { alert("already"); },
               error: (err) => {
                 $("#alertname").append(err.responseJSON.err.errors.name.message);
                 console.log(err.responseJSON.err.errors.name.message);
               }
             })
           }
-
         })
       })
+
+      function todeleteiot(api) {
+        $(document).ready((e) => {
+          $('#confirmModal').modal('toggle');
+          $('#toglemessage').text(`Are you sure to delete ${api}?`)
+          $("#Confirmdelete").on('click', () => {
+            $.ajax({
+              url: `/apidelete/ras/${api}`,
+              type: 'GET',
+              // success: (suc) => { alert("already") },
+              error: (err) => {
+                console.log(api);
+                $('#errmessage').text(`Can not find ${api} in database.`);
+                $('#errModal').modal('toggle');
+              }
+            })
+          })
+        })
+      }
     </script>
 </body>
 

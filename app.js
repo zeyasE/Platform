@@ -48,7 +48,6 @@ app.post("/apipost/raspi", async (req, res) => {
       type: "Raspberry",
       userId: "Test",
       descrip: req.body.descripraspi,
-      dconnect: "none"
     });
     await datauser.save();
     // res.redirect(`/selectraspi/${req.body.nameraspi}`);
@@ -76,14 +75,45 @@ app.post("/apipost/:nameras/iot", async (req, res) => {
       type: "device",
       userid: "Test",
       descrip: req.body.descripiot,
-      dconnect: raspdata["_id"]
+      dconnect: raspdata["_id"],
+      graph: {
+        time: "",
+        date: "",
+        data: "",
+      },
     });
     await datauser.save();
     res.redirect(req.get('referer'));
-  } catch {
-    res.status(202).send(`<p>Sorry this name is used.<p>`);
+  } catch (err) {
+    res.status(404).send({ err });
   }
 })
+
+app.put("/apiput/iot/:namedevice", async (req, res) => {
+  var payload = req.body;
+  const { namedevice } = req.params;
+  const datauser = await dataUser.findOneAndUpdate(
+    { name: namedevice },
+    // { type: "device" },
+    {
+      $push: { graph: payload },
+    },
+    (err, doc) => {
+      if (err) console.log(`Something wrong when update ${namedevice}`);
+      console.log(`Update success ${namedevice}`);
+    }
+  );
+  res.json(datauser);
+});
+
+// {
+//   "type": "device",
+//   "status": true,
+//   "dconnect" : "5f3cefd05b9b8e5730efd9a7",
+//   "name" : "Haowj",
+//   "userId" : "123",
+//   "descrip" : "test1"
+// }
 
 app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
@@ -102,9 +132,13 @@ app.put("/apiput/:namedevice", async (req, res) => {
 
 //reserve => apidelete
 app.delete("/testapidelete/:name", async (req, res) => {
-  const name = req.params.name;
-  const datauser = await dataUser.findOneAndRemove({ name: name });
-  res.sendStatus(204).send();
+  try {
+    const name = req.params.name;
+    const datauser = await dataUser.findOneAndRemove({ name: name });
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(404).send(error);
+  }
 });
 
 //main => apidelete
@@ -112,8 +146,7 @@ app.get("/apidelete/:name", async (req, res) => {
   try {
     const name = req.params.name;
     const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
-      if (err) console.error(err);
-      res.redirect(req.get('referer'));
+      // res.redirect(req.get('referer'));
     });
   } catch (error) {
     res.status(404).send(error);
@@ -125,7 +158,7 @@ app.get("/apidelete/ras/:name", async (req, res) => {
     const idraspi = await dataUser.findOne({ name: name });
     const devices = await dataUser.deleteMany({ dconnect: idraspi["_id"] });
     const deleteraspi = await dataUser.findOneAndRemove({ name: name });
-    res.redirect(req.get('referer'));
+    // res.redirect(req.get('referer'));
   } catch (error) {
     res.status(404).send(error);
   }
