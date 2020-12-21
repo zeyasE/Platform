@@ -1,0 +1,27 @@
+#navtools {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 22.8px 0px 12.8px;
+}
+
+.search {
+    position: absolute;
+    margin: 10px 0px 0px 14px;
+    width: 19px;
+    height: 18px;
+}
+
+#findname {
+    border-radius: 1em;
+    border-color: rgb(110, 110, 110, 0.76);
+    outline: none;
+    height: 38px;
+    width: 500px;
+    padding: 0px 40px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);;
+}
+
+
+/* #copyapi {
+    justify-content: flex-end;
+} */

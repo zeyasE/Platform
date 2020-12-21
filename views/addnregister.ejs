@@ -9,6 +9,7 @@
   <link type="text/css" rel="stylesheet" href="/css/component-sidebar.css" />
   <link type="text/css" rel="stylesheet" href="/css/addpage.css" />
   <link type="text/css" rel="stylesheet" href="/css/body.css" />
+  <link type="text/css" rel="stylesheet" href="/css/navtools.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
@@ -27,6 +28,16 @@
   <%- include ("./component/sidebar.ejs") -%>
     <div>
       <h1>Add Raspberry Pi</h1>
+    </div>
+    <br />
+    <div id="navtools">
+      <div class="inputfind">
+        <img class="search" src="/img/search.png" alt="search" />
+        <input id="findname" type="text">
+      </div>
+      <div id="copyapi">
+        <button>Ok</button>
+      </div>
     </div>
     <br />
     <div class="container-flex" id="listproject">
@@ -101,7 +112,7 @@
               </small>
               <right>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" id="submit" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
               </right>
             </form>
           </div>
@@ -170,10 +181,16 @@
               url: '/apipost/raspi',
               type: 'POST',
               data: ({ nameraspi: $("#nameraspi").val(), descripraspi: $("#descripraspi").val() }),
+              success: (data) => {
+                $("#nameraspi").val('');
+                $('#descripraspi').val('');
+                $('#AddProjectModal').modal('hide');
+              },
               error: (err) => {
                 $("#alertname").append(err.responseJSON.err.errors.name.message);
                 console.log(err.responseJSON.err.errors.name.message);
-              }
+              },
+
             })
           }
         })

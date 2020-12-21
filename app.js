@@ -50,6 +50,7 @@ app.post("/apipost/raspi", async (req, res) => {
       descrip: req.body.descripraspi,
     });
     await datauser.save();
+    res.status(202).send({ datauser });
     // res.redirect(`/selectraspi/${req.body.nameraspi}`);
     // $("#formraspi").submit((e) => {
     //   e.preventDefault();
@@ -83,7 +84,7 @@ app.post("/apipost/:nameras/iot", async (req, res) => {
       },
     });
     await datauser.save();
-    res.redirect(req.get('referer'));
+    res.status(202).send({ datauser });
   } catch (err) {
     res.status(404).send({ err });
   }
