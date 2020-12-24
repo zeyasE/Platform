@@ -134,5 +134,7 @@ h1 {
   margin: 0;
   padding: 4px;
   font: bold 1.5em verdana;
-  border-bottom: 1px solid #000;
+  border-bottom: 3px groove rgb(110, 110, 110, 0.5);
+  background-color: transparent;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
 }

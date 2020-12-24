@@ -1,32 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title><%= data.pageName %></title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Cabin:400,700"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat:900"
-      rel="stylesheet"
-    />
-    <link type="text/css" rel="stylesheet" href="/css/page-not-found.css" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <body>
-    <!-- <div id="notfound">
-      <div class="notfound">
-        <div class="notfound-404">
-          <h3>Oops! <%= data.message %></h3>
-          <h1><%= data.error_code %></h1>
-        </div>
-        <h2>we are sorry, but the page you requested was not found</h2>
-      </div>
-    </div> -->
-    <div title="404"><%= data.error_code %></div>
-  </body>
+  <title>
+    <%= data.pageName %>
+  </title>
+  <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet" />
+  <link type="text/css" rel="stylesheet" href="/css/page-not-found.css" />
+</head>
+
+<body>
+  <div title="404" id="title">
+    <%= data.error_code %>
+  </div>
+  <p>
+    <%= data.err %>
+  </p>
+</body>
+
 </html>

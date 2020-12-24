@@ -77,9 +77,14 @@ app.post("/apipost/:nameras/iot", async (req, res) => {
       userid: "Test",
       descrip: req.body.descripiot,
       dconnect: raspdata["_id"],
+      // iotgraph: {
+      //   graphname: "",
+      //   dataposition: "",
+      //   typegraph: "",
+      //   color: "",
+      // },
       graph: {
         time: "",
-        date: "",
         data: "",
       },
     });
@@ -90,14 +95,37 @@ app.post("/apipost/:nameras/iot", async (req, res) => {
   }
 })
 
-app.put("/apiput/iot/:namedevice", async (req, res) => {
+// save data about graph that user build
+app.put("/apiput/dashboard/:namedevice", async (req, res) => {
+  const { namedevice } = req.params;
+  const datauser = await dataUser.findOneAndUpdate(
+    { name: namedevice },
+    {
+      $addToSet: {
+        iotgraph: {
+          graphname: req.body.graphname,
+          dataposition: req.body.datapositon,
+          typegraph: req.body.typegraph,
+          color: req.body.colorgraph,
+        }
+      },
+    },
+    (err, doc) => {
+      if (err) console.log(`Something wrong when update ${namedevice}`);
+    }
+  )
+  res.status(202).send(datauser);
+})
+
+// add data from iot to collect in graph array
+app.put("/apiput/iotdata/:namedevice", async (req, res) => {
   var payload = req.body;
   const { namedevice } = req.params;
   const datauser = await dataUser.findOneAndUpdate(
     { name: namedevice },
     // { type: "device" },
     {
-      $push: { graph: payload },
+      $addToSet: { graph: payload },
     },
     (err, doc) => {
       if (err) console.log(`Something wrong when update ${namedevice}`);
@@ -116,6 +144,7 @@ app.put("/apiput/iot/:namedevice", async (req, res) => {
 //   "descrip" : "test1"
 // }
 
+// test edit method PUT
 app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
   const { namedevice } = req.params;
@@ -213,8 +242,28 @@ app.get("/selectraspi/:name", async (req, res, next) => {
 
 app.get("/dashboard/:name", async (req, res, next) => {
   try {
-    const { name } = req.params;
-    res.status(200).render("iotdev.ejs", { nameiotdev: name });
+    var { name } = req.params;
+    var iotdata = await dataUser.findOne({ name: name });
+    var graphdata = iotdata.graph;
+    var amountdata = graphdata[iotdata.graph.length - 1].data.length;
+
+    // setInterval(() => {
+    //   let date_ob = new Date();
+    //   let date = ("0" + date_ob.getDate()).slice(-2);
+    //   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    //   let year = date_ob.getFullYear();
+    //   let hours = ("0" + date_ob.getHours()).slice(-2);
+    //   let minutes = ("0" + date_ob.getMinutes()).slice(-2);
+    //   let seconds = ("0" + date_ob.getSeconds()).slice(-2);
+    //   console.log(year + month + date + hours + minutes + seconds);
+    // }, 1000);
+    // console.log(iotdata);
+    // console.log(graphdata);
+    if (iotdata === {}) {
+      res.send("please");
+    } else {
+      res.status(200).render("iotdev.ejs", { nameiotdev: name, amountdata: amountdata, exampledata: graphdata });
+    }
   } catch (error) {
     res.status(404).send(error);
   }

@@ -9,8 +9,9 @@ const datauserSchema = mongoose.Schema({
   descrip: { type: String, require: true }, // descrip project
   apiraspi: { type: String, require: true }, // api for raspi
   apiiot: { type: String, require: true }, // api for iot
-  // variable: { type: [[String]], require: true }, //collect name of variable
-  graph: [{ time: { type: Number, require: true }, date: { type: Number, require: true }, data: { type: [String], require: true }, }], // make graph
+  // typegraph: { type: [String], require: true }, // type of graph for iot device
+  iotgraph: [{ graphname: { type: String }, dataposition: { type: Number, require: true }, typegraph: { type: String, require: true }, color: { type: String, require: true } }], // name of graph
+  graph: [{ time: { type: Number, require: true }, data: { type: [String], require: true }, }], // make graph
 })
 
 

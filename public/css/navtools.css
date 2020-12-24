@@ -14,14 +14,16 @@
 #findname {
     border-radius: 1em;
     border-color: rgb(110, 110, 110, 0.76);
+    background-color: transparent;
     outline: none;
     height: 38px;
     width: 500px;
     padding: 0px 40px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);;
+    z-index: 0;
 }
 
-
-/* #copyapi {
-    justify-content: flex-end;
-} */
+button[name="buttonnav"] {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 91px;
+}

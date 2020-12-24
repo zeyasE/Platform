@@ -9,6 +9,7 @@
   <link type="text/css" rel="stylesheet" href="/css/component-sidebar.css" />
   <link type="text/css" rel="stylesheet" href="/css/addpage.css" />
   <link type="text/css" rel="stylesheet" href="/css/body.css" />
+  <link type="text/css" rel="stylesheet" href="/css/navtools.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
@@ -26,6 +27,13 @@
   <%- include ("./component/sidebar.ejs") -%>
     <div>
       <h1>Select Iot Devices</h1>
+    </div>
+    <br />
+    <div id="navtools">
+      <div class="inputfind">
+        <img class="search" src="/img/search.png" alt="search" />
+        <input id="findname" type="text" placeholder="Search...">
+      </div>
     </div>
     <br />
     <div class="container-flex">

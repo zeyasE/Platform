@@ -9,12 +9,13 @@
     <link type="text/css" rel="stylesheet" href="/css/component-sidebar.css" />
     <link type="text/css" rel="stylesheet" href="/css/addpage.css" />
     <link type="text/css" rel="stylesheet" href="/css/body.css" />
+    <link type="text/css" rel="stylesheet" href="/css/navtools.css" />
+    <link type="text/css" rel="stylesheet" href="/css/iotdev.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
         integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
         crossorigin="anonymous"></script>
@@ -31,6 +32,128 @@
             </h1>
         </div>
         <br />
+        <div id="navtools">
+            <div class="inputfind">
+                <img class="search" src="/img/search.png" alt="search" />
+                <input id="findname" type="text" placeholder="Search...">
+            </div>
+            <div id="copyapi">
+                <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
+                    data-target="#AddGraph">Add Iot</button>
+                <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button>
+            </div>
+        </div>
+        <br />
+
+        <div class="modal fade" id="AddGraph" tabindex="-1" aria-labelledby="AddGraph" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Add Graph</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="GraphName" placeholder="Graph name...">
+                                    <small id="alertname" class="form-text text-muted">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="choosedata" class="col-sm-2 col-form-label">Data</label>
+                                <% if(exampledata[exampledata.length - 1].data[0] !=="" || exampledata.length> 1 ) {%>
+                                    <div class="col-sm-10">
+                                        <select id="inputStatedata" class="form-control">
+                                            <option selected disabled>Choose...</option>
+                                            <% for(let i=0; i < amountdata; i++) {%>
+                                                <option>data<%= i +1 %>
+                                                </option>
+                                                <% } %>
+                                        </select>
+                                        <% for(let i=0; i < amountdata; i++) {%>
+                                            <small class="form-text text-muted">data<%= i+1%>:
+                                                    <% for(let j=exampledata.length - 1; j < exampledata.length;j++) {
+                                                        %>
+                                                        <% if(exampledata[j].data[i] !=="" ){ %>
+                                                            <%= exampledata[j].data[i] %>,
+                                                                <% }%>
+                                                                    <% } %>
+                                                                        ...
+                                            </small>
+                                            <% } %>
+                                                <small id="alertstatedata" class="form-text text-muted"></small>
+                                    </div>
+                                    <% } else {%>
+                                        <div class="col-sm-10">
+                                            <select id="inputStatedata" class="form-control">
+                                                <option selected disabled>Choose...</option>
+                                            </select>
+                                        </div>
+                                        <% } %>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-2">Graph</div>
+                                <div class="col-sm-10">
+                                    <select id="inputStateGraph" class="form-control">
+                                        <option selected disabled>Choose...</option>
+                                        <option>Bar graph</option>
+                                    </select>
+                                    <small id="alertstategraph" class="form-text text-muted">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphColor" class="col-sm-2 col-form-label">Color</label>
+                                <div class="col-sm-5">
+                                    <input type="color" class="form-control form-control-color" id="GraphColor"
+                                        value="#bdbdbd" title="Choose your color">
+                                </div>
+                            </div>
+                            <right>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                            </right>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
+<script>
+    $(document).ready(() => {
+        $("#submit").click((e) => {
+            e.preventDefault();
+            $("#alertname").empty();
+            $("#alertstatedata").empty();
+            $("#alertstategraph").empty();
+            if ($("#GraphName").val() === "") {
+                $("#alertname").append("please full fill name.")
+            } else if ($("#inputStatedata").val() === "Choose...") {
+                $("#alertstatedata").append("please choose data.")
+            } else if ($("#inputStateGraph").val() === "Choose...") {
+                $("#alertstategraph").append("please choose type.")
+            } else {
+                $.ajax({
+                    url: `/apiput/dashboard/<%= nameiotdev %>`,
+                    type: 'PUT',
+                    data: ({ graphname: $("#GraphName").val(), datapositon: $("#inputStatedata").val().replace(/[^0-9.]/g, "") - 1, typegraph: $("#inputStateGraph").val(), colorgraph: $("#GraphColor").val().replace(/#/g, "") }),
+                    success: (data) => {
+                        console.log($("#inputStatedata").val());
+                        $("#GraphName").val('');
+                        $('#inputStatedata').val('Choose...');
+                        $('#inputStateGraph').val('Choose...');
+                        $('#AddGraph').modal('hide');
+                    },
+                })
+            }
+        })
+    })
+</script>
 
 </html>
