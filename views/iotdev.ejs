@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
+    <script type="text/javascript" src="/function/plotgraph.js"></script>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"
         integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
@@ -45,6 +47,11 @@
             </div>
         </div>
         <br />
+        <div class="container-flex" id="creategraph">
+            <!-- <div class="list-graph">
+                <div id='myDiv'></div>
+            </div> -->
+        </div>
 
         <div class="modal fade" id="AddGraph" tabindex="-1" aria-labelledby="AddGraph" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -102,9 +109,25 @@
                                 <div class="col-sm-10">
                                     <select id="inputStateGraph" class="form-control">
                                         <option selected disabled>Choose...</option>
-                                        <option>Bar graph</option>
+                                        <option>lines+markers</option>
                                     </select>
                                     <small id="alertstategraph" class="form-text text-muted">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">X-axis</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="xaxis" placeholder="Name...">
+                                    <small id="alertname" class="form-text text-muted">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Y-axis</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="yaxis" placeholder="Name...">
+                                    <small id="alertname" class="form-text text-muted">
                                     </small>
                                 </div>
                             </div>
@@ -142,9 +165,9 @@
                 $.ajax({
                     url: `/apiput/dashboard/<%= nameiotdev %>`,
                     type: 'PUT',
-                    data: ({ graphname: $("#GraphName").val(), datapositon: $("#inputStatedata").val().replace(/[^0-9.]/g, "") - 1, typegraph: $("#inputStateGraph").val(), colorgraph: $("#GraphColor").val().replace(/#/g, "") }),
+                    data: ({ graphname: $("#GraphName").val(), datapositon: $("#inputStatedata").val().replace(/[^0-9.]/g, "") - 1, typegraph: $("#inputStateGraph").val(), colorgraph: $("#GraphColor").val().replace(/#/g, ""), xaxis: $("#xaxis").val(), yaxis: $("#yaxis").val() }),
                     success: (data) => {
-                        console.log($("#inputStatedata").val());
+                        // console.log($("#inputStatedata").val());
                         $("#GraphName").val('');
                         $('#inputStatedata').val('Choose...');
                         $('#inputStateGraph').val('Choose...');
@@ -153,6 +176,116 @@
                 })
             }
         })
+        // $(`<div class="list-graph">hello</div>`).appendTo('#creategraph');
+        $.ajax({
+            url: `/apiget/n/<%= nameiotdev %>`,
+            type: 'GET',
+            success: (datagraph) => {
+                let rawdata = datagraph.graph.slice(1, datagraph.graph.length);
+                // console.log(rawdata);
+                if (datagraph.iotgraph.length === 0) {
+                    $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
+                } else {
+                    datagraph.iotgraph.forEach((e) => {
+                        // console.log(e);
+                        $(`<div class="list-graph"><div class="closebutton">&times;</div>
+                            <div id="name-G">${e.graphname}</div><div class="data-graph" id="${e._id}"></div>`).appendTo('#creategraph');
+                        var trace1 = {
+                            type: "scatter",
+                            mode: `${e.typegraph}`,
+                            // name: 'AAPL High',
+                            x: plottime(rawdata),
+                            y: plotgraph(rawdata, `${e.dataposition}`),
+                            line: { color: `#${e.color}` }
+                        }
+                        var data = [trace1];
+                        let xaxis = e.xaxis !== undefined ? `${e.xaxis}` : `Date`;
+                        let yaxis = e.yaxis !== undefined ? `${e.yaxis}` : `Data${e.dataposition}`;
+                        var layout = {
+                            xaxis: {
+                                title: {
+                                    text: xaxis,
+                                    font: {
+                                        family: 'Courier New, monospace',
+                                        size: 18,
+                                        color: '#7f7f7f'
+                                    }
+                                },
+                                autorange: true,
+                                type: 'date'
+                            },
+                            yaxis: {
+                                title: {
+                                    text: yaxis,
+                                    font: {
+                                        family: 'Courier New, monospace',
+                                        size: 18,
+                                        color: '#7f7f7f'
+                                    }
+                                },
+                                autorange: true,
+                                showlegend: true,
+                                type: 'linear'
+                            }
+                        };
+
+                        Plotly.newPlot(`${e._id}`, data, layout);
+                    });
+                }
+            }
+        })
+        // $.ajax({
+        //     url: `/apiget/rawdata/<%= nameiotdev %>`,
+        //     type: 'GET',
+        //     success: (data) => {
+        //         // console.log(plottime(data));
+        //         // console.log(plotgraph(data, 1));
+        //         var trace1 = {
+        //             type: "scatter",
+        //             mode: "lines+markers",
+        //             name: 'AAPL High',
+        //             x: plottime(data),
+        //             y: plotgraph(data, 0),
+        //             line: { color: '#17BECF' }
+        //         }
+
+        //         var data = [trace1];
+
+        //         var layout = {
+        //             xaxis: {
+        //                 autorange: true,
+        //                 //     range: ['2015-02-17', '2017-02-16'],
+        //                 //     rangeselector: {
+        //                 //         buttons: [
+        //                 //             {
+        //                 //                 count: 1,
+        //                 //                 label: '1m',
+        //                 //                 step: 'month',
+        //                 //                 stepmode: 'backward'
+        //                 //             },
+        //                 //             {
+        //                 //                 count: 6,
+        //                 //                 label: '6m',
+        //                 //                 step: 'month',
+        //                 //                 stepmode: 'backward'
+        //                 //             },
+        //                 //             { step: 'all' }
+        //                 //         ]
+        //                 //     },
+        //                 //     rangeslider: { range: ['2015-02-17', '2017-02-16'] },
+        //                 type: 'date'
+        //             },
+        //             yaxis: {
+        //                 autorange: true,
+        //                 // range: [86.8700008333, 138.870004167],
+        //                 showlegend: true,
+        //                 type: 'linear'
+        //             }
+        //         };
+
+        //         Plotly.newPlot('myDiv', data, layout);
+        //     }
+        // })
     })
 </script>
 

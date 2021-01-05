@@ -16,6 +16,7 @@ const axios = require("axios");
 const setting = require("./settings.js");
 const { find } = require("./models/datauser.js");
 const { reset } = require("nodemon");
+const { raw } = require("body-parser");
 const uri =
   "mongodb+srv://iwing:iwingku77@cluster0.3abk6.mongodb.net/iwing?retryWrites=true&w=majority";
 // const MongoClient = require("mongodb").MongoClient;
@@ -107,6 +108,8 @@ app.put("/apiput/dashboard/:namedevice", async (req, res) => {
           dataposition: req.body.datapositon,
           typegraph: req.body.typegraph,
           color: req.body.colorgraph,
+          xaxis: req.body.xaxis,
+          yaxis: req.body.yaxis,
         }
       },
     },
@@ -114,6 +117,7 @@ app.put("/apiput/dashboard/:namedevice", async (req, res) => {
       if (err) console.log(`Something wrong when update ${namedevice}`);
     }
   )
+  // console.log(datauser);
   res.status(202).send(datauser);
 })
 
@@ -182,6 +186,8 @@ app.get("/apidelete/:name", async (req, res) => {
     res.status(404).send(error);
   }
 });
+
+// delete ras pi and all iot connect to this ras pi
 app.get("/apidelete/ras/:name", async (req, res) => {
   try {
     const name = req.params.name;
@@ -218,6 +224,29 @@ app.get("/apiget/sr/:name", async (req, res) => {
   const idRasPi = await dataUser.findOne({ name: name });
   const datauser = await dataUser.find({ dconnect: idRasPi["_id"] })
   res.json(datauser);
+});
+
+// get raw data
+app.get("/apiget/rawdata/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const datauser = await dataUser.findOne({ name: name });
+    const rawdata = datauser.graph.slice(1, datauser.graph.length);
+
+    // rawdata.forEach((element) => {
+    //   element.data.forEach((e) => {
+    //     console.log(e)
+    //   });
+    // });
+
+    // const newmap = rawdata.map((e) => {
+    //   return e.data;
+    // })
+    // console.log(newmap)
+    res.json(rawdata);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 app.get("/selectraspi/:name", async (req, res, next) => {
