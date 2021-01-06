@@ -200,6 +200,36 @@ app.get("/apidelete/ras/:name", async (req, res) => {
   }
 })
 
+//delete graph
+app.get("/apidelete/graph/:name/:id", async (req, res) => {
+  try {
+    const { name, id } = req.params;
+    // const datauser = await dataUser.findOne({ name: name });
+    const iotgraph = await dataUser.findOneAndUpdate(
+      { name: name },
+      {
+        $pull: {
+          iotgraph: {
+            _id: id
+          }
+        }
+      },
+      { new: true },
+      (err, doc) => {
+        if (err) console.log(`Something wrong when update ${name}`);
+        console.log(`Update success ${name}`);
+      }
+    );
+    // res.redirect(req.get('referer'));
+    // console.log(datauser);
+    // console.log(iotgraph);
+    res.send(iotgraph);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send(err);
+  }
+})
+
 // test get find
 // get all raspi&iot
 app.get("/apiget", async (req, res) => {

@@ -147,6 +147,27 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="toglemessage">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="closedelete"
+                            data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="Confirmdelete"
+                            data-dismiss="modal">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 <script>
     $(document).ready(() => {
@@ -182,13 +203,11 @@
             type: 'GET',
             success: (datagraph) => {
                 let rawdata = datagraph.graph.slice(1, datagraph.graph.length);
-                // console.log(rawdata);
                 if (datagraph.iotgraph.length === 0) {
                     $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
                 } else {
                     datagraph.iotgraph.forEach((e) => {
-                        // console.log(e);
-                        $(`<div class="list-graph"><div class="closebutton">&times;</div>
+                        $(`<div class="list-graph"><div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
                             <div id="name-G">${e.graphname}</div><div class="data-graph" id="${e._id}"></div>`).appendTo('#creategraph');
                         var trace1 = {
                             type: "scatter",
@@ -234,59 +253,25 @@
                 }
             }
         })
-        // $.ajax({
-        //     url: `/apiget/rawdata/<%= nameiotdev %>`,
-        //     type: 'GET',
-        //     success: (data) => {
-        //         // console.log(plottime(data));
-        //         // console.log(plotgraph(data, 1));
-        //         var trace1 = {
-        //             type: "scatter",
-        //             mode: "lines+markers",
-        //             name: 'AAPL High',
-        //             x: plottime(data),
-        //             y: plotgraph(data, 0),
-        //             line: { color: '#17BECF' }
-        //         }
-
-        //         var data = [trace1];
-
-        //         var layout = {
-        //             xaxis: {
-        //                 autorange: true,
-        //                 //     range: ['2015-02-17', '2017-02-16'],
-        //                 //     rangeselector: {
-        //                 //         buttons: [
-        //                 //             {
-        //                 //                 count: 1,
-        //                 //                 label: '1m',
-        //                 //                 step: 'month',
-        //                 //                 stepmode: 'backward'
-        //                 //             },
-        //                 //             {
-        //                 //                 count: 6,
-        //                 //                 label: '6m',
-        //                 //                 step: 'month',
-        //                 //                 stepmode: 'backward'
-        //                 //             },
-        //                 //             { step: 'all' }
-        //                 //         ]
-        //                 //     },
-        //                 //     rangeslider: { range: ['2015-02-17', '2017-02-16'] },
-        //                 type: 'date'
-        //             },
-        //             yaxis: {
-        //                 autorange: true,
-        //                 // range: [86.8700008333, 138.870004167],
-        //                 showlegend: true,
-        //                 type: 'linear'
-        //             }
-        //         };
-
-        //         Plotly.newPlot('myDiv', data, layout);
-        //     }
-        // })
     })
+    function todeletegraph(nameiotdev, id) {
+        $(document).ready((e) => {
+            $('#confirmModal').modal('toggle');
+            $('#toglemessage').text(`Are you sure to delete ?`)
+            $("#Confirmdelete").on('click', () => {
+                $.ajax({
+                    url: `/apidelete/graph/${nameiotdev}/${id}`,
+                    type: 'GET',
+                    // success: (suc) => { alert("already") },
+                    error: (err) => { // error it's not run while using it
+                        console.log(id);
+                        $('#errmessage').text(`Can not find ${id} in database.`);
+                        $('#errModal').modal('toggle');
+                    }
+                })
+            })
+        })
+    }
 </script>
 
 </html>
