@@ -42,13 +42,14 @@ app.post("/apipost", async (req, res) => {
 
 // create raspi
 app.post("/apipost/raspi", async (req, res) => {
-  var message;
   try {
     const datauser = new dataUser({
       name: req.body.nameraspi,
       type: "Raspberry",
       userId: "Test",
       descrip: req.body.descripraspi,
+      password: req.body.password,
+      ip: req.body.ip
     });
     await datauser.save();
     res.status(202).send({ datauser });
@@ -181,6 +182,7 @@ app.get("/apidelete/:name", async (req, res) => {
     const name = req.params.name;
     const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
       // res.redirect(req.get('referer'));
+      res.status(202);
     });
   } catch (error) {
     res.status(404).send(error);

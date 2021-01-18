@@ -36,43 +36,7 @@
       </div>
     </div>
     <br />
-    <div class="container-flex">
-      <% for(let i=0; i < dataallpObj.length; i++) { %>
-        <% if (dataallpObj[i].status) { %>
-          <div class="listproject">
-            <div class="listpro-card">
-              <div class="listpro-front">
-                <p>
-                  <%= dataallpObj[i].name%>
-                </p>
-              </div>
-              <div class="listpro-back">
-                <div class="closebutton" onclick="todeleteraspi(`<%= dataallpObj[i].name %>`)">&times;</div>
-                <p onclick="location.href='/dashboard/<%= dataallpObj[i].name %>'">
-                  <%= dataallpObj[i].descrip %>
-                </p>
-              </div>
-            </div>
-          </div>
-          <% }else{ %>
-            <div class="listproject">
-              <div class="listpro-card">
-                <div class="listpro-front"
-                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <p>
-                    <%= dataallpObj[i].name%>
-                  </p>
-                </div>
-                <div class="listpro-back"
-                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <div class="closebutton" onclick="todeleteraspi(`<%= dataallpObj[i].name %>`)">&times;</div>
-                  <p onclick="location.href='/dashboard/<%= dataallpObj[i].name %>'">
-                    <%= dataallpObj[i].descrip %>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <% }} %>
+    <div class="container-flex" id="listproject">
     </div>
 
     <!-- confirm model -->
@@ -115,6 +79,30 @@
     </div>
 
     <script>
+      getdata();
+      function getdata() {
+        $.ajax({
+          url: `/apiget/t/device`,
+          type: 'GET',
+          success: (res) => {
+            res.forEach((list) => {
+              let color = "";
+              if (!list.status) color = "border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);";
+              $(`<div class="listproject">
+                  <div class="listpro-card">
+                    <div class="listpro-front" style="${color}">
+                      <p>${list.name}</p>
+                    </div>
+                  <div class="listpro-back" style="${color}">
+                    <div class="closebutton" onclick="todeleteraspi('${list.name}')">&times;</div>
+                      <p onclick="location.href='/dashboard/${list.name}'">${list.descrip}</p>
+                    </div>
+                  </div>
+                </div>`).appendTo('#listproject');
+            });
+          }
+        })
+      }
       function todeleteraspi(api) {
         $(document).ready((e) => {
           $('#confirmModal').modal('toggle');
@@ -123,13 +111,14 @@
             $.ajax({
               url: `/apidelete/${api}`,
               type: 'GET',
-              success: (suc) => { alert("already") },
               error: (err) => { // error it's not run while using it
                 console.log(api)
                 $('#errmessage').text(`Can not find ${api} in database.`);
                 $('#errModal').modal('toggle');
               }
             })
+            $('#listproject').empty();
+            getdata();
           })
         })
       }

@@ -7,7 +7,8 @@ const datauserSchema = mongoose.Schema({
   dconnect: { type: String, require: true }, // collect id from raspberry for iot only
   name: { type: String, required: true, unique: true, maxlength: 24 },
   descrip: { type: String, require: true }, // descrip project
-  apiraspi: { type: String, require: true }, // api for raspi
+  password: { type: String, require: true }, // password for raspi
+  ip: { type: String, require: true }, // ip for raspi
   apiiot: { type: String, require: true }, // api for iot
   // typegraph: { type: [String], require: true }, // type of graph for iot device
   iotgraph: [{ graphname: { type: String }, dataposition: { type: String, require: true }, typegraph: { type: String, require: true }, color: { type: String, require: true }, xaxis: { type: String, require: true }, yaxis: { type: String, require: true }, dataname: { type: String, require: true } }], // name of graph

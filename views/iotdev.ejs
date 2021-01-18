@@ -41,9 +41,9 @@
             </div>
             <div id="copyapi">
                 <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
-                    data-target="#AddGraph">Add Iot</button>
-                <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
-                    data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button>
+                    data-target="#AddGraph">@Graph</button>
+                <!-- <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button> -->
             </div>
         </div>
         <br />
@@ -110,6 +110,7 @@
                                     <select id="inputStateGraph" class="form-control">
                                         <option selected disabled>Choose...</option>
                                         <option>lines+markers</option>
+                                        <option>scattermapbox</option>
                                     </select>
                                     <small id="alertstategraph" class="form-text text-muted">
                                     </small>
@@ -196,6 +197,7 @@
                     },
                 })
             }
+            location.reload();
         })
         // $(`<div class="list-graph">hello</div>`).appendTo('#creategraph');
         $.ajax({
@@ -203,56 +205,105 @@
             type: 'GET',
             success: (datagraph) => {
                 let rawdata = datagraph.graph.slice(1, datagraph.graph.length);
+                // console.log(rawdata);
                 if (datagraph.iotgraph.length === 0) {
                     $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
                 } else {
                     datagraph.iotgraph.forEach((e) => {
                         $(`<div class="list-graph"><div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
                             <div id="name-G">${e.graphname}</div><div class="data-graph" id="${e._id}"></div>`).appendTo('#creategraph');
-                        var trace1 = {
-                            type: "scatter",
-                            mode: `${e.typegraph}`,
-                            // name: 'AAPL High',
-                            x: plottime(rawdata),
-                            y: plotgraph(rawdata, `${e.dataposition}`),
-                            line: { color: `#${e.color}` }
-                        }
-                        var data = [trace1];
-                        let xaxis = e.xaxis !== undefined ? `${e.xaxis}` : `Date`;
-                        let yaxis = e.yaxis !== undefined ? `${e.yaxis}` : `Data${e.dataposition}`;
-                        var layout = {
-                            xaxis: {
-                                title: {
-                                    text: xaxis,
-                                    font: {
-                                        family: 'Courier New, monospace',
-                                        size: 18,
-                                        color: '#7f7f7f'
-                                    }
-                                },
-                                autorange: true,
-                                type: 'date'
-                            },
-                            yaxis: {
-                                title: {
-                                    text: yaxis,
-                                    font: {
-                                        family: 'Courier New, monospace',
-                                        size: 18,
-                                        color: '#7f7f7f'
-                                    }
-                                },
-                                autorange: true,
-                                showlegend: true,
-                                type: 'linear'
+                        if (e.typegraph === "lines+markers") {
+                            var trace1 = {
+                                type: "scatter",
+                                mode: `${e.typegraph}`,
+                                // name: 'AAPL High',
+                                x: plottime(rawdata),
+                                y: plotgraph(rawdata, `${e.dataposition}`),
+                                line: { color: `#${e.color}` }
                             }
-                        };
+                            var data = [trace1];
+                            let yaxis = e.yaxis !== undefined ? `${e.yaxis}` : `Data${e.dataposition}`;
+                            var layout = {
+                                xaxis: {
+                                    title: {
+                                        text: 'Date',
+                                        font: {
+                                            family: 'Courier New, monospace',
+                                            size: 18,
+                                            color: '#7f7f7f'
+                                        }
+                                    },
+                                    autorange: true,
+                                    type: 'date'
+                                },
+                                yaxis: {
+                                    title: {
+                                        text: yaxis,
+                                        font: {
+                                            family: 'Courier New, monospace',
+                                            size: 18,
+                                            color: '#7f7f7f'
+                                        }
+                                    },
+                                    autorange: true,
+                                    type: 'linear'
+                                },
+                                // showlegend: true
+                            };
 
-                        Plotly.newPlot(`${e._id}`, data, layout);
+                            Plotly.newPlot(`${e._id}`, data, layout);
+                        } else if (e.typegraph === "scattermapbox") {
+                            // function unpack(rows, key) {
+                            //     return rows.map(function (row) { return row[key]; });
+                            // }
+
+                            // function getMaxOfArray(numArray) {
+                            //     return Math.max.apply(null, numArray);
+                            // }
+                            var data = [];
+                            // var count = unpack(rows, 'cnt');
+                            var Lons = plotmap(rawdata, `${e.dataposition}`, 1);
+                            var Lats = plotmap(rawdata, `${e.dataposition}`, 0);
+
+                            for (var i = 0; i < rawdata.length - 1; i++) {
+                                // var opacityValue = count[i] / getMaxOfArray(count);
+
+                                var result = {
+                                    type: 'scattermapbox',
+                                    name: `${plottime(rawdata)[i].replace(/[-| :]/gi, "")}`,
+                                    // locationmode: 'USA-states',
+                                    lon: [Lons[i], Lons[i + 1]],
+                                    lat: [Lats[i], Lats[i + 1]],
+                                    mode: 'lines',
+                                    line: {
+                                        width: 2,
+                                        color: `#${e.color}`
+                                    },
+                                    // opacity: opacityValue
+                                };
+
+                                data.push(result);
+                            };
+
+                            var layout = {
+                                // title: 'Feb. 2011 American Airline flight paths',
+                                showlegend: false,
+                                mapbox: {
+                                    style: "stamen-terrain",
+                                    center: { lon: Lons[0], lat: Lats[0] },
+                                    zoom: 5
+                                },
+                            };
+
+                            Plotly.newPlot(`${e._id}`, data, layout, { showLink: false });
+                        }
                     });
                 }
             }
         })
+        if ($("#inputStateGraph").val() === "scattermapbox") {
+            $("#inputStatedata").hidden();
+        }
     })
     function todeletegraph(nameiotdev, id) {
         $(document).ready((e) => {
@@ -269,6 +320,7 @@
                         $('#errModal').modal('toggle');
                     }
                 })
+                location.reload();
             })
         })
     }

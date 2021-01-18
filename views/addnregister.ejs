@@ -38,47 +38,6 @@
     </div>
     <br />
     <div class="container-flex" id="listproject">
-      <div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddProjectModal">
-        <img src="/img/addpage.png" alt="addpagesymbol" />
-      </div>
-      <% for(let i=0; i < dataaddpObj.length; i++){ %>
-        <% if(dataaddpObj[i].status) {%>
-          <div class="listproject">
-            <div class="listpro-card">
-              <div class="listpro-front">
-                <p id="namedevice">
-                  <%= dataaddpObj[i].name %>
-                </p>
-              </div>
-              <div class="listpro-back">
-                <div class="closebutton" onclick="todeleteraspi(`<%= dataaddpObj[i].name %>`)">&times;
-                </div>
-                <p onclick="location.href='/selectraspi/<%= dataaddpObj[i].name %>';">
-                  <%= dataaddpObj[i].descrip %>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <% }else{ %>
-            <div class="listproject">
-              <div class="listpro-card">
-                <div class="listpro-front"
-                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <p id="namedevice">
-                    <%= dataaddpObj[i].name %>
-                  </p>
-                </div>
-                <div class="listpro-back"
-                  style="border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);">
-                  <div class="closebutton" onclick="todeleteiot(`<%= dataaddpObj[i].name %>`)"> &times;</div>
-                  <p onclick=" location.href='/selectraspi/<%= dataaddpObj[i].name %>' ;">
-                    <%= dataaddpObj[i].descrip %>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <% }} %>
     </div>
 
     <div class="modal fade" id="AddProjectModal" tabindex="-1" aria-labelledby="AddProjectModalLabel"
@@ -95,22 +54,25 @@
             <form id="formraspi" action="">
               <!-- method="POST" action="/apipost/raspi" -->
               <div class="form-group">
-                <label for="InputName">Name</label>
+                <label for="InputName">Name/Cliend_ID</label>
                 <input type="text" name="nameraspi" class="form-control" id="nameraspi" aria-describedby="nameHelp"
                   required>
                 <small id="alertname" class="form-text text-muted">
                 </small>
-              </div>
-              <div class="form-group">
+                <label for="Inputpassword">Password</label>
+                <input type="text" name="passnameraspi" class="form-control" id="password" aria-describedby="nameHelp"
+                  required>
+                <label for="InputIP">Server IP</label>
+                <input type="text" name="serverip" class="form-control" id="ip" aria-describedby="nameHelp" required>
                 <label for="InputDescripRas">Descript</label>
-                <textarea class="form-control" name="descripraspi" id="descripraspi" rows="3" required></textarea>
+                <textarea class="form-control" name="descripraspi" id="descripraspi" rows="2" required></textarea>
+                <small id="alertdes" class="form-text text-muted">
+                </small>
+                <right>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                </right>
               </div>
-              <small id="alertdes" class="form-text text-muted">
-              </small>
-              <right>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-              </right>
             </form>
           </div>
         </div>
@@ -157,13 +119,33 @@
     </div>
 
     <script>
-      // $(document).ready(() => {
-      //   $('#testtext').click((e) => {
-      //     e.preventDefault();
-      //     alert($("#test").val());;
-      //   })
-      // })
-      // add raspi process
+      getdata();
+      function getdata() {
+        $.ajax({
+          url: `/apiget/t/Raspberry`,
+          type: 'GET',
+          success: (res) => {
+            $(`<div class="listproject" id="addsymbol" data-toggle="modal" data-target="#AddProjectModal">
+                <img src="/img/addpage.png" alt="addpagesymbol" />
+              </div>`).appendTo('#listproject');
+            res.forEach((list) => {
+              let color = "";
+              if (!list.status) color = "border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);";
+              $(`<div class="listproject">
+                  <div class="listpro-card">
+                    <div class="listpro-front" style="${color}">
+                      <p>${list.name}</p>
+                    </div>
+                  <div class="listpro-back" style="${color}">
+                    <div class="closebutton" onclick="todeleteiot('${list.name}')">&times;</div>
+                      <p onclick="location.href='/selectraspi/${list.name}'">${list.descrip}</p>
+                    </div>
+                  </div>
+                </div>`).appendTo('#listproject');
+            });
+          }
+        })
+      }
       $(document).ready(() => {
         $("#submit").click((e) => {
           e.preventDefault();
@@ -177,17 +159,17 @@
             $.ajax({
               url: '/apipost/raspi',
               type: 'POST',
-              data: ({ nameraspi: $("#nameraspi").val(), descripraspi: $("#descripraspi").val() }),
+              data: ({ nameraspi: $("#nameraspi").val(), descripraspi: $("#descripraspi").val(), password: $("#password").val(), ip: $("#ip").val() }),
               success: (data) => {
                 $("#nameraspi").val('');
                 $('#descripraspi').val('');
                 $('#AddProjectModal').modal('hide');
+                location.reload();
               },
               error: (err) => {
                 $("#alertname").append(err.responseJSON.err.errors.name.message);
                 console.log(err.responseJSON.err.errors.name.message);
               },
-
             })
           }
         })
@@ -208,6 +190,7 @@
                 $('#errModal').modal('toggle');
               }
             })
+            location.reload();
           })
         })
       }
