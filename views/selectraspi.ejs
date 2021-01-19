@@ -36,9 +36,14 @@
         <img class="search" src="/img/search.png" alt="search" />
         <input id="findname" type="text" placeholder="Search...">
       </div>
-      <div id="copyapi">
-        <button type="button" class="btn btn-outline-success" id="copyapi" data-bs-toggle="tooltip"
-          data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button>
+      <div>
+        <% if(status){ %>
+          <button type="button" class="btn btn-success" id="connectedtoras" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Copy Api for Raspberry Pi">Connected</button>
+          <% }else{ %>
+            <button type="button" class="btn btn-danger" id="connectedtoras" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="Copy Api for Raspberry Pi">Connect</button>
+            <% } %>
       </div>
     </div>
     <br />

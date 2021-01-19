@@ -25,6 +25,10 @@
   display: none;
 }
 
+#mySidenav a{
+  color: #000000;
+}
+
 .sidenav a {
   margin-top: 5px;
   padding: 10px 0px 20px 25px;

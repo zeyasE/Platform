@@ -29,6 +29,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+console.log("hello world");
+
 app.post("/apipost", async (req, res) => {
   try {
     const payload = req.body;
@@ -286,7 +288,7 @@ app.get("/selectraspi/:name", async (req, res, next) => {
     const { name } = req.params;
     const idRasPi = await dataUser.findOne({ name: name });
     const datauser = await dataUser.find({ dconnect: idRasPi["_id"] });
-    res.status(200).render("selectraspi.ejs", { dataRasPiObj: datauser, nameRasPi: name });
+    res.status(200).render("selectraspi.ejs", { dataRasPiObj: datauser, nameRasPi: name, status: idRasPi.status });
   } catch (error) {
     res.status(404).send(error);
   }
@@ -323,7 +325,7 @@ app.get("/dashboard/:name", async (req, res, next) => {
     if (iotdata === {}) {
       res.send("please");
     } else {
-      res.status(200).render("iotdev.ejs", { nameiotdev: name, amountdata: amountdata, exampledata: graphdata });
+      res.status(200).render("iotdev.ejs", { nameiotdev: name, amountdata: amountdata, exampledata: graphdata, status: iotdata.status });
     }
   } catch (error) {
     res.status(404).send(error);

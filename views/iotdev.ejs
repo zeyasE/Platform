@@ -40,10 +40,17 @@
                 <input id="findname" type="text" placeholder="Search...">
             </div>
             <div id="copyapi">
-                <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
-                    data-target="#AddGraph">@Graph</button>
-                <!-- <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
-                    data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button> -->
+                <% if(status){ %>
+                    <button type="button" class="btn btn-success" id="connectedtoras" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="Copy Api for Raspberry Pi">Connected</button>
+                    <% }else{ %>
+                        <button type="button" class="btn btn-danger" id="connectedtoras" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="Copy Api for Raspberry Pi">Connect</button>
+                        <% } %>
+                            <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
+                                data-target="#AddGraph">@Graph</button>
+                            <!-- <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button> -->
             </div>
         </div>
         <br />
@@ -117,19 +124,17 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="GraphName" class="col-sm-2 col-form-label">X-axis</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="xaxis" placeholder="Name...">
-                                    <small id="alertname" class="form-text text-muted">
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label for="GraphName" class="col-sm-2 col-form-label">Y-axis</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id="yaxis" placeholder="Name...">
                                     <small id="alertname" class="form-text text-muted">
                                     </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Unit</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="unit" placeholder="Unit...">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -187,7 +192,7 @@
                 $.ajax({
                     url: `/apiput/dashboard/<%= nameiotdev %>`,
                     type: 'PUT',
-                    data: ({ graphname: $("#GraphName").val(), datapositon: $("#inputStatedata").val().replace(/[^0-9.]/g, "") - 1, typegraph: $("#inputStateGraph").val(), colorgraph: $("#GraphColor").val().replace(/#/g, ""), xaxis: $("#xaxis").val(), yaxis: $("#yaxis").val() }),
+                    data: ({ graphname: $("#GraphName").val(), datapositon: $("#inputStatedata").val().replace(/[^0-9.]/g, "") - 1, typegraph: $("#inputStateGraph").val(), colorgraph: $("#GraphColor").val().replace(/#/g, ""), xaxis: $("#unit").val(), yaxis: $("#yaxis").val() }),
                     success: (data) => {
                         // console.log($("#inputStatedata").val());
                         $("#GraphName").val('');
@@ -210,9 +215,24 @@
                     $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
                 } else {
                     datagraph.iotgraph.forEach((e) => {
-                        $(`<div class="list-graph"><div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
-                            <div id="name-G">${e.graphname}</div><div class="data-graph" id="${e._id}"></div>`).appendTo('#creategraph');
+                        // $(`<div class="list-graph">
+                        //     <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
+                        //     <div id="name-G">${e.graphname}</div>
+                        //     <div class="data-graph" id="${e._id}"></div>
+                        //     <div class="trackgraph">
+                        //         <div><span style="background-color: #${e.color};" class="dot"></span>Bookmarks</div>
+                        //     </div>`).appendTo('#creategraph');
                         if (e.typegraph === "lines+markers") {
+                            // $('<tr><th>name</th></tr>').appendTo(`#${e._id + 'Subhead'}`);
+                            console.log(e);
+                            console.log(e.xaxis);
+                            $(`<div class="list-graph">
+                            <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
+                            <div id="name-G">${e.graphname}</div>
+                            <div class="data-graph" id="${e._id}"></div>
+                            <div class="trackgraph">
+                                <div><span style="background-color: #${e.color};" class="dot"></span>${e.xaxis}</div>
+                            </div>`).appendTo('#creategraph');
                             var trace1 = {
                                 type: "scatter",
                                 mode: `${e.typegraph}`,
@@ -253,7 +273,28 @@
 
                             Plotly.newPlot(`${e._id}`, data, layout);
                         } else if (e.typegraph === "scattermapbox") {
-                            // function unpack(rows, key) {
+                            $(`<div class="list-graph">
+                            <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
+                            <div id="name-G">${e.graphname}</div>
+                            <div class="data-graph" id="${e._id}"></div>
+                            <div class="trackgraph">
+                                <div class="Header">
+                                <span style="background-color: #${e.color};" class="dot"></span>Bookmarks</div>
+                                <div class="Subhead" id="${e._id + 'Subhead'}">
+                                <table>
+                                    <tr>
+                                        <th>number/</th>
+                                        <th>time/</th>
+                                        <th>lat/</th>
+                                        <th>lon</th>
+                                    </tr>
+                                </table>
+                                </div>
+                                <table>
+                                    <div class="listtrack" id="${e._id + 'list'}"></div>
+                                </table>
+                            </div>`).appendTo('#creategraph');
+                            // function unpack(rows, key) {0
                             //     return rows.map(function (row) { return row[key]; });
                             // }
 
@@ -266,11 +307,12 @@
                             var Lats = plotmap(rawdata, `${e.dataposition}`, 0);
 
                             for (var i = 0; i < rawdata.length - 1; i++) {
+                                $(`<tr> <td>${i + 1}</td><td> ${plottime(rawdata)[i]}</td> <td>${Lons[i]}</td><td>${Lats[i]}</td> </tr>`).appendTo(`#${e._id + 'list'}`);
                                 // var opacityValue = count[i] / getMaxOfArray(count);
 
                                 var result = {
                                     type: 'scattermapbox',
-                                    name: `${plottime(rawdata)[i].replace(/[-| :]/gi, "")}`,
+                                    name: `${i + 1}`,
                                     // locationmode: 'USA-states',
                                     lon: [Lons[i], Lons[i + 1]],
                                     lat: [Lats[i], Lats[i + 1]],

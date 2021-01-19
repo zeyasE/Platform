@@ -4,6 +4,7 @@
     height: 35em;
     width: 97%;
     margin: 0.8em;
+    padding-right: 0;
     display: flex;
     border-style: solid;
     position: relative;
@@ -13,7 +14,7 @@
 .data-graph {
     margin-top: 20px;
     margin-left: 20px;
-    width: 70%;
+    width: 65%;
 }
 
 #name-G{
@@ -28,3 +29,47 @@
     margin: 15% 0% 0% 40%;
     color: rgba(110, 110, 110);
 }
+
+.trackgraph{
+    margin: 50px 0 50px 0;
+    border-style: solid;
+    border: 1em;
+    width: 30%;
+    height: 80%;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+}
+
+.Header {
+    font-size: 20px;
+    margin-bottom: 10px;;
+}
+
+.listtrack {
+    width: 100%;
+    overflow: scroll;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+.listtrack td {
+    padding: 0 0 0 8px;
+}
+
+/* .Subhead tr {
+    padding-left: 80px;
+}
+.Subhead th {
+    padding: 0 30px 0 30px;
+} */
