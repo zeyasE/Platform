@@ -12,6 +12,9 @@ const allProject = require("./controllers/allProject.js");
 const dataUser = require("./models/datauser.js");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const mqtt = require("mqtt");
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 const axios = require("axios");
 const setting = require("./settings.js");
 const { find } = require("./models/datauser.js");
@@ -22,6 +25,8 @@ const uri =
 // const MongoClient = require("mongodb").MongoClient;
 // const client = new MongoClient(uri, { useNewUrlParser: true });
 
+// new mqttconnect('myhome', 'myraspi', '192.168.1.194').startmqtt();
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -29,7 +34,75 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
-console.log("hello world");
+class mqttconnect {
+  constructor(user, password, server) {
+    this.server = server
+    this.user = user
+    this.password = password
+  }
+  startmqtt() {
+    var port = "1883";
+    var topic = '#';
+    var user = this.user;
+    var client = mqtt.connect({
+      host: this.server,
+      port: port,
+      username: this.user,
+      password: this.password
+    })
+    client.on('connect', function () {
+      // Subscribe any topic
+      console.log("MQTT Connect to");
+      client.subscribe(topic, function (err) {
+        console.log("Subscribed to " + topic);
+        if (err) {
+          console.log(err);
+        }
+      });
+    });
+
+    client.on("error", function (error) {
+      console.log("ERROR: ", error);
+      client.end()
+    });
+
+    client.on('offline', function () {
+      console.log("offline");
+      client.end()
+    });
+
+    client.on('reconnect', function () {
+      console.log("reconnect");
+    });
+    client.on('message', function (topic, message, packet) {
+      console.log(user + " connected to " + topic);
+      console.log(message.toString());
+    });
+  }
+}
+
+async function getonline() {
+  const datauser = await dataUser.find({ status: false });
+  datauser.forEach((e) => {
+    console.log(e.name);
+  })
+}
+
+io.on('connection', (socket) => {
+  io.emit('startserver', { server: "a user connected" });
+  console.log('user connected');
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+  socket.on('disconnect', () => {
+    io.emit('startserver', { server: "user disconnected" });
+  })
+  socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    // gettest();
+    // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
+  });
+});
 
 app.post("/apipost", async (req, res) => {
   try {
@@ -55,16 +128,8 @@ app.post("/apipost/raspi", async (req, res) => {
     });
     await datauser.save();
     res.status(202).send({ datauser });
-    // res.redirect(`/selectraspi/${req.body.nameraspi}`);
-    // $("#formraspi").submit((e) => {
-    //   e.preventDefault();
-    // })
-    // $("#listproject").load(window.location.href + " #listproject");
   } catch (err) {
     res.status(404).send({ err });
-    // res.status(200).render("/apipost/raspi", { err: message });
-    // res.status(404).send(message);
-    // $("#alertname").append(message);
   }
 });
 
@@ -142,16 +207,6 @@ app.put("/apiput/iotdata/:namedevice", async (req, res) => {
   res.json(datauser);
 });
 
-// {
-//   "type": "device",
-//   "status": true,
-//   "dconnect" : "5f3cefd05b9b8e5730efd9a7",
-//   "name" : "Haowj",
-//   "userId" : "123",
-//   "descrip" : "test1"
-// }
-
-// test edit method PUT
 app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
   const { namedevice } = req.params;
@@ -161,11 +216,30 @@ app.put("/apiput/:namedevice", async (req, res) => {
     { new: true },
     (err, doc) => {
       if (err) console.log(`Something wrong when update ${namedevice}`);
-      console.log(`Update success ${namedevice}`);
+      console.log(`Something wrong when update ${namedevice}`);
     }
   );
   res.json(datauser);
 });
+
+// edit ip
+app.put("/apiput/ip/:namedevice", async (req, res) => {
+  const { namedevice } = req.params;
+  const datauser = await dataUser.findOneAndUpdate(
+    { name: namedevice },
+    {
+      $set:
+      {
+        ip: req.body.ip
+      }
+    },
+    { new: true },
+    (err, doc) => {
+      if (err) console.log(`Something wrong when update ${namedevice}` + err);
+    }
+  )
+  res.send(true);
+})
 
 //reserve => apidelete
 app.delete("/testapidelete/:name", async (req, res) => {
@@ -184,7 +258,7 @@ app.get("/apidelete/:name", async (req, res) => {
     const name = req.params.name;
     const datauser = await dataUser.findOneAndRemove({ name: name }, (err, doc) => {
       // res.redirect(req.get('referer'));
-      res.status(202);
+      res.status(202).send(true);
     });
   } catch (error) {
     res.status(404).send(error);
@@ -263,6 +337,7 @@ app.get("/apiget/sr/:name", async (req, res) => {
 // get raw data
 app.get("/apiget/rawdata/:name", async (req, res) => {
   try {
+    changestatus = true;
     const { name } = req.params;
     const datauser = await dataUser.findOne({ name: name });
     const rawdata = datauser.graph.slice(1, datauser.graph.length);
@@ -288,19 +363,10 @@ app.get("/selectraspi/:name", async (req, res, next) => {
     const { name } = req.params;
     const idRasPi = await dataUser.findOne({ name: name });
     const datauser = await dataUser.find({ dconnect: idRasPi["_id"] });
-    res.status(200).render("selectraspi.ejs", { dataRasPiObj: datauser, nameRasPi: name, status: idRasPi.status });
+    res.status(200).render("selectraspi.ejs", { dataRasPiObj: datauser, nameRasPi: name, idRasPi: idRasPi });
   } catch (error) {
     res.status(404).send(error);
   }
-  // const noRasPi = await axios
-  // .get(`${setting.apiURLselectRasPi}/${name}`)
-  // .then(res => {
-  //   return res.data;
-  // })
-  // .catch(err => { 
-  //   res.status(404).send(err)
-  // })
-  // res.status(200).send(noRasPi)
 });
 
 app.get("/dashboard/:name", async (req, res, next) => {
@@ -338,10 +404,39 @@ app.get("/all", allProject);
 app.get("/", mainController);
 app.get("*", pageNotFoundController);
 
+// io.on('connection', (socket) => {
+//   console.log('user connected');
+//   //   io.emit('startserver', { server: "a user connected" });
+//   // socket.on('chat message', (msg) => {
+//   //     io.emit('chat message', msg);
+//   // });
+//   socket.on('chat message', (msg) => {
+//     console.log(msg);
+//     // new mqttconnect('myhome', 'myraspi', '192.168.1.194').startmqtt();
+//   })
+// })
+
+// io.on('connection', (socket) => {
+//   io.emit('startserver', { server: "a user connected" });
+//   console.log('user connected');
+//   socket.on('chat message', (msg) => {
+//     io.emit('chat message', msg);
+//   });
+//   socket.on('disconnect', () => {
+//     io.emit('startserver', { server: "user disconnected" });
+//   })
+//   socket.on('chat message', (msg) => {
+//     console.log('message: ' + msg);
+//     // gettest();
+//     // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
+//   });
+// });
+
 mongoose
   .connect(uri, { useNewUrlParser: true })
   .then(() => {
     console.log("We are connected to Mongoose");
+
   })
   .catch((error) => {
     console.log("MongoDB error", error);

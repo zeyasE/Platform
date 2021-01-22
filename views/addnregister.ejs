@@ -62,8 +62,12 @@
                 <label for="Inputpassword">Password</label>
                 <input type="text" name="passnameraspi" class="form-control" id="password" aria-describedby="nameHelp"
                   required>
+                <small id="alertpassword" class="form-text text-muted">
+                </small>
                 <label for="InputIP">Server IP</label>
                 <input type="text" name="serverip" class="form-control" id="ip" aria-describedby="nameHelp" required>
+                <small id="alertip" class="form-text text-muted">
+                </small>
                 <label for="InputDescripRas">Descript</label>
                 <textarea class="form-control" name="descripraspi" id="descripraspi" rows="2" required></textarea>
                 <small id="alertdes" class="form-text text-muted">
@@ -150,9 +154,15 @@
         $("#submit").click((e) => {
           e.preventDefault();
           $("#alertname").empty();
+          $("#alertpassword").empty();
+          $("#alertip").empty();
           $("#alertdes").empty();
           if ($("#nameraspi").val() === "") {
             $("#alertname").append("please full fill name.")
+          } else if ($("#password").val() === "") {
+            $("#alertpassword").append("plese full fill password")
+          } else if ($("#ip").val() === "") {
+            $("#alertip").append("plese full fill Server IP")
           } else if ($("#descripraspi").val() === "") {
             $("#alertdes").append("plese full fill descrip")
           } else {

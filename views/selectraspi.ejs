@@ -13,8 +13,11 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script> -->
+  <!-- <script type="text/javascript" src="/function/socket.io/client-dist/socket.io.min.js"></script> -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous" -->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
     integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
     crossorigin="anonymous"></script>
@@ -37,12 +40,14 @@
         <input id="findname" type="text" placeholder="Search...">
       </div>
       <div>
-        <% if(status){ %>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#editip">Edit
+          IP</button>
+        <% if(idRasPi.status){ %>
           <button type="button" class="btn btn-success" id="connectedtoras" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="Copy Api for Raspberry Pi">Connected</button>
+            data-bs-placement="top" title="Status">Connected</button>
           <% }else{ %>
             <button type="button" class="btn btn-danger" id="connectedtoras" data-bs-toggle="tooltip"
-              data-bs-placement="top" title="Copy Api for Raspberry Pi">Connect</button>
+              data-bs-placement="top" title="Status">Connect</button>
             <% } %>
       </div>
     </div>
@@ -168,31 +173,62 @@
       </div>
     </div>
 
+    <div class="modal fade" id="editip" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label for="GraphName" class="col-sm-2 col-form-label">New IP</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="newip" placeholder="Ip..." required>
+                  <small id="ipexample" class="form-text text-muted">old ip: <%= idRasPi.ip %></small>
+                </div>
+              </div>
+              <right>
+                <button type="button" class="btn btn-secondary" id="closeip" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="confirmip" data-dismiss="modal">Submit</button>
+              </right>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul id="messages">hello</ul>
+    <form action="" id="#testest">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
     <script>
-      // getdata();
-      // function getdata() {
-      //   $.ajax({
-      //     url: `/apiget/t/device`,
-      //     type: 'GET',
-      //     success: (res) => {
-      //       res.forEach((list) => {
-      //         let color = "";
-      //         if (!list.status) color = "border-color: rgb(110, 110, 110, 0.76);background-color: rgba(110, 110, 110, 0.233);";
-      //         $(`<div class="listproject">
-      //             <div class="listpro-card">
-      //               <div class="listpro-front" style="${color}">
-      //                 <p>${list.name}</p>
-      //               </div>
-      //             <div class="listpro-back" style="${color}">
-      //               <div class="closebutton" onclick="todeleteraspi('${list.name}')">&times;</div>
-      //                 <p onclick="location.href='/dashboard/${list.name}'">${list.descrip}</p>
-      //               </div>
-      //             </div>
-      //           </div>`).appendTo('#listproject');
-      //       });
-      //     }
-      //   })
-      // }
+      // $(() => {
+      //   var socket = io();
+      //   $('#connectedtoras').click((e) => {
+      //     e.preventDefault(); // prevents page reloading
+      //     console.log("connect to io")
+      //     socket.emit('chat message', 'hello');
+      //     // return false;
+      //   });
+      // });
+      $(function () {
+        var socket = io();
+        $('#testest').submit(function (e) {
+          e.preventDefault(); // prevents page reloading
+          socket.emit('chat message', $('#m').val());
+          $('#m').val('');
+          return false;
+        });
+        socket.on('startserver', (data) => {
+          $('#messages').append($('<li>').text(data.server));
+        })
+        socket.on('chat message', (msg) => {
+          $('#messages').append($('<li>').text(msg));
+        });
+      });
       $(document).ready(() => {
         $("#submit").click((e) => {
           e.preventDefault();
@@ -203,7 +239,6 @@
           } else if ($("#descripiot").val() === "") {
             $("#alertdes").append("plese full fill descrip")
           } else {
-            console.log(`<%= nameRasPi %>`);
             $.ajax({
               url: `/apipost/<%= nameRasPi %>/iot`,
               type: 'POST',
@@ -221,25 +256,35 @@
             })
           }
         })
+        $("#confirmip").click((e) => {
+          e.preventDefault();
+          $.ajax({
+            url: `/apiput/ip/<%= nameRasPi %>`,
+            type: 'PUT',
+            data: ({ ip: $("#newip").val() }),
+            success: (data) => {
+              location.reload();
+            }
+          })
+        })
       })
 
       function todeleteiot(api) {
         $(document).ready((e) => {
           // e.preventDefault();
           $('#confirmModal').modal('toggle');
-          $('#toglemessage').text(`Are you sure to delete ${api}?`)
+          $('#toglemessage').text(`Are you sure to delete ${api} ? `)
           $("#Confirmdelete").on('click', () => {
             $.ajax({
               url: `/apidelete/${api}`,
               type: 'GET',
-              // success: (suc) => { alert("already") },
+              success: (suc) => { location.reload(); },
               error: (err) => {
                 console.log(api)
                 $('#errmessage').text(`Can not find ${api} in database.`);
                 $('#errModal').modal('toggle');
               }
             })
-            location.reload();
           })
         })
       }

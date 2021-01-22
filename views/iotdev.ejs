@@ -40,17 +40,15 @@
                 <input id="findname" type="text" placeholder="Search...">
             </div>
             <div id="copyapi">
+                <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
+                    data-target="#AddGraph">@Graph</button>
                 <% if(status){ %>
                     <button type="button" class="btn btn-success" id="connectedtoras" data-bs-toggle="tooltip"
-                        data-bs-placement="top" title="Copy Api for Raspberry Pi">Connected</button>
+                        data-bs-placement="top" title="Status">Connected</button>
                     <% }else{ %>
                         <button type="button" class="btn btn-danger" id="connectedtoras" data-bs-toggle="tooltip"
-                            data-bs-placement="top" title="Copy Api for Raspberry Pi">Connect</button>
+                            data-bs-placement="top" title="Status">Connect</button>
                         <% } %>
-                            <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
-                                data-target="#AddGraph">@Graph</button>
-                            <!-- <button type="button" class="btn btn-success" id="copyapi" name="buttonnav" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="Copy Api for Raspberry Pi">Copy Api</button> -->
             </div>
         </div>
         <br />

@@ -20,7 +20,9 @@
     "mongodb": "^3.6.0",
     "mongoose": "^5.10.0",
     "mongoose-unique-validator": "^2.0.3",
-    "node-fetch": "^2.6.1"
+    "mqtt": "^4.2.6",
+    "node-fetch": "^2.6.1",
+    "socket.io": "^3.0.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
