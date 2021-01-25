@@ -67,6 +67,11 @@ table {
     padding: 0 0 0 8px;
 }
 
+#adddatabutton{
+    height: 40px;
+    width: 40px;
+}
+
 /* .Subhead tr {
     padding-left: 80px;
 }

@@ -34,6 +34,86 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+function gettime() {
+  let date_ob = new Date();
+  let date = ("0" + date_ob.getDate()).slice(-2);
+  let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+  let year = date_ob.getFullYear();
+  let hours = ("0" + date_ob.getHours()).slice(-2);
+  let minutes = ("0" + date_ob.getMinutes()).slice(-2);
+  let seconds = ("0" + date_ob.getSeconds()).slice(-2);
+  return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`
+}
+
+async function getonline() {
+  const datauser = await dataUser.find();
+  datauser.forEach((e) => {
+    if (e.status) new mqttconnect(e.name, e.password, e.ip).startmqtt();
+  })
+}
+
+async function updatestatus(name, status) {
+  const datauser = await dataUser.findOneAndUpdate(
+    { name: name },
+    { $set: { status: status } },
+    { new: true },
+    (err, doc) => {
+      if (err) console.log(`Error on raspberry ${name} is: ${err}`);
+      if (!status) console.log(`Raspberry ${name} offline`);
+    }
+  )
+}
+
+async function findandsave(nameraspi, iot, message) {
+  const inforaspi = await dataUser.findOne({ name: nameraspi });
+  const topics = await dataUser.findOne(
+    { name: iot },
+    { dconnect: inforaspi._id }
+  );
+  if (topics === null) {
+    const newiot = new dataUser({
+      name: iot,
+      type: "device",
+      dconnect: inforaspi._id,
+      descrip: `automatic connect from ${nameraspi}`,
+      graph: {
+        time: "",
+        data: "",
+      },
+    })
+    await newiot.save();
+    const updateiot = await dataUser.findOneAndUpdate(
+      { name: iot, dconnect: inforaspi._id },
+      {
+        $addToSet: {
+          graph: {
+            time: gettime(),
+            data: message
+          }
+        }
+      }, (err, doc) => {
+        if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
+      }
+    );
+  } else if (topics !== null) {
+    const updateiot = await dataUser.findOneAndUpdate(
+      { name: iot, dconnect: inforaspi._id },
+      {
+        $addToSet: {
+          graph: {
+            time: gettime(),
+            data: message
+          }
+        }
+      }, (err, doc) => {
+        if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
+      }
+    );
+  } else {
+    console.log("error");
+  }
+}
+
 class mqttconnect {
   constructor(user, password, server) {
     this.server = server
@@ -44,6 +124,7 @@ class mqttconnect {
     var port = "1883";
     var topic = '#';
     var user = this.user;
+    var countstatus = 1;
     var client = mqtt.connect({
       host: this.server,
       port: port,
@@ -52,9 +133,10 @@ class mqttconnect {
     })
     client.on('connect', function () {
       // Subscribe any topic
-      console.log("MQTT Connect to");
+      updatestatus(user, true);
+      console.log("MQTT Connect to" + user);
       client.subscribe(topic, function (err) {
-        console.log("Subscribed to " + topic);
+        // console.log("Subscribed to " + topic);
         if (err) {
           console.log(err);
         }
@@ -63,46 +145,45 @@ class mqttconnect {
 
     client.on("error", function (error) {
       console.log("ERROR: ", error);
+      updatestatus(user, false);
       client.end()
     });
-
-    client.on('offline', function () {
-      console.log("offline");
-      client.end()
-    });
-
     client.on('reconnect', function () {
-      console.log("reconnect");
+      console.log("Reconnect to " + user + ` ${[countstatus]}`);
+      // update coming soon : add page download
+      if (countstatus === 3) {
+        updatestatus(user, false);
+        client.end();
+      }
+      countstatus += 1;
     });
+    // client.on('offline', function () {
+    //   console.log("offline");
+    //   // client.end()
+    // });
     client.on('message', function (topic, message, packet) {
-      console.log(user + " connected to " + topic);
-      console.log(message.toString());
+      findandsave(user, topic, message);
+      // console.log(topic + ": " + message.toString());
     });
   }
 }
 
-async function getonline() {
-  const datauser = await dataUser.find({ status: false });
-  datauser.forEach((e) => {
-    console.log(e.name);
-  })
-}
-
-io.on('connection', (socket) => {
-  io.emit('startserver', { server: "a user connected" });
-  console.log('user connected');
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-  socket.on('disconnect', () => {
-    io.emit('startserver', { server: "user disconnected" });
-  })
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    // gettest();
-    // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
-  });
-});
+getonline();
+// io.on('connection', (socket) => {
+//   io.emit('startserver', { server: "a user connected" });
+//   console.log('user connected');
+//   socket.on('chat message', (msg) => {
+//     io.emit('chat message', msg);
+//   });
+//   socket.on('disconnect', () => {
+//     io.emit('startserver', { server: "user disconnected" });
+//   })
+//   socket.on('chat message', (msg) => {
+//     console.log('message: ' + msg);
+//     // gettest();
+//     // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
+//   });
+// });
 
 app.post("/apipost", async (req, res) => {
   try {
@@ -230,6 +311,7 @@ app.put("/apiput/ip/:namedevice", async (req, res) => {
     {
       $set:
       {
+        // status: true,
         ip: req.body.ip
       }
     },
@@ -375,17 +457,8 @@ app.get("/dashboard/:name", async (req, res, next) => {
     var iotdata = await dataUser.findOne({ name: name });
     var graphdata = iotdata.graph;
     var amountdata = graphdata[iotdata.graph.length - 1].data.length;
-
-    // setInterval(() => {
-    //   let date_ob = new Date();
-    //   let date = ("0" + date_ob.getDate()).slice(-2);
-    //   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    //   let year = date_ob.getFullYear();
-    //   let hours = ("0" + date_ob.getHours()).slice(-2);
-    //   let minutes = ("0" + date_ob.getMinutes()).slice(-2);
-    //   let seconds = ("0" + date_ob.getSeconds()).slice(-2);
-    //   console.log(year + month + date + hours + minutes + seconds);
-    // }, 1000);
+    // var newamount = amountdata.split(",");
+    // console.log(amountdata);
     // console.log(iotdata);
     // console.log(graphdata);
     if (iotdata === {}) {
@@ -416,24 +489,29 @@ app.get("*", pageNotFoundController);
 //   })
 // })
 
-// io.on('connection', (socket) => {
-//   io.emit('startserver', { server: "a user connected" });
-//   console.log('user connected');
-//   socket.on('chat message', (msg) => {
-//     io.emit('chat message', msg);
-//   });
-//   socket.on('disconnect', () => {
-//     io.emit('startserver', { server: "user disconnected" });
-//   })
-//   socket.on('chat message', (msg) => {
-//     console.log('message: ' + msg);
-//     // gettest();
-//     // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
-//   });
-// });
+io.on('connection', (socket) => {
+  // io.emit('startserver', { server: "a user connected" });
+  // console.log('user connected');
+  // socket.on('chat message', (msg) => {
+  //   io.emit('chat message', msg);
+  // });
+  // socket.on('disconnect', () => {
+  //   io.emit('startserver', { server: "user disconnected" });
+  // })
+  socket.on('state', async (name) => {
+    const datauser = await dataUser.findOne({ name: name });
+    io.emit('returnstate', datauser.status);
+  })
+  socket.on('chat message', (name, password, ip) => {
+    new mqttconnect(name, password, ip).startmqtt();
+    // console.log('message: ' + name + " " + password + " " + ip);
+    // gettest();
+    // new mqttconnect(msg, 'myraspi', '192.168.1.194').startmqtt();
+  });
+});
 
 mongoose
-  .connect(uri, { useNewUrlParser: true })
+  .connect(uri, { useNewUrlParser: true, useFindAndModify: false })
   .then(() => {
     console.log("We are connected to Mongoose");
 
@@ -442,7 +520,7 @@ mongoose
     console.log("MongoDB error", error);
   });
 
-app.listen(port, () => {
+http.listen(port, () => {
   console.log(
     `This is Platform for Manage Tracking Device \nServer is running on port ${port}`
   );
