@@ -37,6 +37,7 @@
     width: 30%;
     height: 80%;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     display: flex;
 }
@@ -67,11 +68,22 @@ table {
     padding: 0 0 0 8px;
 }
 
-#adddatabutton{
-    height: 40px;
-    width: 40px;
+#adddatabutton, #deldatabutton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    margin: 12px 5px 5px 0px;
 }
 
+select[name=listdata], input[name=GraphColor]{
+    margin: 8px 0 8px 0;
+}
+
+#smallexdata {
+    margin-top: -20px;
+}
 /* .Subhead tr {
     padding-left: 80px;
 }

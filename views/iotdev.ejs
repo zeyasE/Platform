@@ -93,6 +93,14 @@
                                 <div class="col-sm-8" id="inputState">
                                 </div>
                                 <button type="button" class="btn btn-success" id="adddatabutton">+</button>
+                                <button type="button" class="btn btn-danger" id="deldatabutton">-</button>
+                            </div>
+                            <div class="form-group row" id="smallexdata">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <small id="alldata" class="form-text text-muted"></small>
+                                    <small id="alertstatedata" class="form-text text-muted"></small>
+                                </div>
                             </div>
                             <div class="form-group row" id="hiddeny">
                                 <label for="GraphName" class="col-sm-2 col-form-label">Y-axis</label>
@@ -104,15 +112,15 @@
                             </div>
                             <div class="form-group row" id="hiddenu">
                                 <label for="GraphName" class="col-sm-2 col-form-label">Unit</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="unit" placeholder="Unit...">
+                                <div class="col-sm-10" id="unitinput">
+                                    <input type="text" class="form-control" id="unit0" placeholder="Unit...">
                                 </div>
                             </div>
                             <div class="form-group row" id="hiddencolor">
                                 <label for="GraphColor" class="col-sm-2 col-form-label">Color</label>
-                                <div class="col-sm-5">
-                                    <input type="color" class="form-control form-control-color" id="GraphColor"
-                                        value="#bdbdbd" title="Choose your color">
+                                <div class="col-sm-5" id="gcolor">
+                                    <input type="color" class="form-control form-control-color" id="GraphColor0"
+                                        value="#bdbdbd" title="Choose your color" name="GraphColor">
                                 </div>
                             </div>
                             <right>
@@ -163,75 +171,107 @@
         var addnum = 1;
         var numdata = splitdata(`<%= exampledata[exampledata.length - 1].data %>`);
         var typeg = "";
-        $(`<select id="inputStatedata" class="form-control">
+        $(`<select id="inputStatedata0" class="form-control" name="listdata">
             <option selected disabled>Choose...</option>
             </select>
-            <small id="alldata" class="form-text text-muted"></small>
-            <small id="alertstatedata" class="form-text text-muted"></small>`).appendTo("#inputState")
+            `).appendTo("#inputState")
         for (let k = 0; k < numdata.length; k++) {
-            $(`<option class="forline">data ${k + 1}</option> `).appendTo("#inputStatedata");
+            $(`<option class="forline">data ${k + 1}</option> `).appendTo("select[name=listdata]");
             $(`<small class="forline">data ${k + 1}: ${numdata[k]},...</small></br>`).appendTo("#alldata");
         }
         $("#flexRadioDefault2").click((e) => {
-            addnum = 1;
-            addnum += 1;
+            $("#gcolor").empty();
             $("#inputState").empty();
-            $(`<select id="inputStatedata1" class="form-control" name="listdata">
-            <option selected disabled>Choose...Latitude</option>
-            </select></br>
-            <select id="inputStatedata2" class="form-control" name="listdata">
-            <option selected disabled>Choose...Longtitude</option>
-            </select>
-            <small id="alldata" class="form-text text-muted" name="alldata"></small>
-            <small id="alertstatedata" class="form-text text-muted"></small>`).appendTo("#inputState")
+            addnum = 1;
+            // addnum += 1;
+            $(`<input type="color" class="form-control form-control-color" id="GraphColor0"
+            value="#bdbdbd" title="Choose your color" name="GraphColor">`).appendTo("#gcolor");
+            for (let l = 0; l <= addnum; l++) {
+                $(`<select id="inputStatedata${l}" class="form-control" name="listdata">
+                <option selected disabled>Choose...Latitude</option>
+                </select>`).appendTo("#inputState")
+            }
             for (let k = 0; k < numdata.length; k++) {
                 $(`<option class="forline">data ${k + 1}</option> `).appendTo("select[name=listdata]");
-                $(`<small class="forline">data ${k + 1}: ${numdata[k]},...</small></br>`).appendTo("small[name=alldata]");
             }
+            $("#adddatabutton").hide();
+            $("#deldatabutton").hide();
             $("#hiddeny").hide();
             $("#hiddenu").hide();
             typeg = "scattermapbox";
         })
         $("#flexRadioDefault1").click((e) => {
+            addnum = 0;
+            $("#unitinput").empty();
             $("#inputState").empty();
-            $(`<select id="inputStatedata1" class="form-control" name="listdata">
+            $("#gcolor").empty();
+            $(`<select id="inputStatedata0" class="form-control" name="listdata">
             <option selected disabled>Choose...</option>
-            </select>
-            <small id="alldata" class="form-text text-muted name="alldata""></small>
-            <small id="alertstatedata" class="form-text text-muted"></small>`).appendTo("#inputState")
-            // $("#adddatabutton").click((e2) => { })
+            </select>`).appendTo("#inputState");
+            $(`<input type="color" class="form-control form-control-color" id="GraphColor0"
+            value="#bdbdbd" title="Choose your color" name="GraphColor">`).appendTo("#gcolor");
+            $(`<input type="text" class="form-control" id="unit0" placeholder="Unit..." name="GraphColor">`).appendTo('#unitinput');
             for (let k = 0; k < numdata.length; k++) {
                 $(`<option class="forline">data ${k + 1}</option> `).appendTo("select[name=listdata]");
-                $(`<small class="forline">data ${k + 1}: ${numdata[k]},...</small></br>`).appendTo("small[name=alldata]");
             }
+            $("#adddatabutton").show();
+            $("#deldatabutton").show();
             $("#hiddeny").show();
             $("#hiddenu").show();
             typeg = "lines+markers";
         })
+        $("#adddatabutton").click((e2) => {
+            addnum += 1;
+            $(`<select id="inputStatedata${addnum}" class="form-control" name="listdata">
+            <option selected disabled>Choose...</option>
+            </select>`).appendTo("#inputState")
+            $(`<input type="color" class="form-control form-control-color" id="GraphColor${addnum}"
+            value="#bdbdbd" title="Choose your color" name="GraphColor">`).appendTo("#gcolor")
+            $(`<input type="text" class="form-control" id="unit${addnum}" placeholder="Unit..." name="GraphColor">`).appendTo('#unitinput');
+            for (let k = 0; k < numdata.length; k++) {
+                $(`<option class="forline">data ${k + 1}</option> `).appendTo(`#inputStatedata${addnum}`);
+            }
+        })
+        $("#deldatabutton").click((e2) => {
+            if (addnum !== 1) {
+                $(`#inputStatedata${addnum}`).remove();
+                $(`#GraphColor${addnum}`).remove();
+                $(`#unit${addnum}`).remove();
+                addnum -= 1;
+            }
+        })
         $("#submit").click((e) => {
             e.preventDefault();
             var arraydata = [];
-            if ($("#inputStatedata2").val() === null || $("#inputStatedata2").val() === undefined) {
-                arraydata.push($("#inputStatedata1").val().replace(/[^0-9.]/g, "") - 1);
-            } else {
-                arraydata.push($("#inputStatedata1").val().replace(/[^0-9.]/g, "") - 1);
-                arraydata.push($("#inputStatedata2").val().replace(/[^0-9.]/g, "") - 1);
-            }
-            console.log(arraydata);
+            var arraycolor = [];
+            var arrayunit = [];
             $("#alertname").empty();
             $("#alertstatedata").empty();
             $("#alertstategraph").empty();
+            for (let k = 0; k < addnum + 1; k++) {
+                arraydata.push($(`#inputStatedata${k}`).val().replace(/[^0-9.]/g, "") - 1);
+            }
+            if (typeg === "lines+markers") {
+                for (let k = 0; k < addnum + 1; k++) {
+                    arraycolor.push($(`#GraphColor${k}`).val().replace(/#/g, ""));
+                    arrayunit.push($(`#unit${k}`).val());
+                }
+            } else {
+                arraycolor.push($(`#GraphColor0`).val().replace(/#/g, ""));
+            }
             if ($("#GraphName").val() === "") {
                 $("#alertname").append("please full fill name.")
-            } else if ($("#inputStatedata1").val() === null) {
+            } else if ($("#inputStatedata0").val() === null || $("#inputStatedata0").val() === undefined) {
                 $("#alertstatedata").append("please choose data.")
             } else if (typeg === "") {
                 $("#alertstategraph").append("please choose type.")
             } else {
+                console.log(arraycolor);
+                console.log(arraydata);
                 $.ajax({
                     url: `/apiput/dashboard/<%= nameiotdev %>`,
                     type: 'PUT',
-                    data: ({ graphname: $("#GraphName").val(), datapositon: arraydata, typegraph: typeg, colorgraph: $("#GraphColor").val().replace(/#/g, ""), xaxis: $("#unit").val(), yaxis: $("#yaxis").val() }),
+                    data: ({ graphname: $("#GraphName").val(), datapositon: [...arraydata], typegraph: typeg, colorgraph: arraycolor, xaxis: arrayunit, yaxis: $("#yaxis").val() }),
                     success: (data) => {
                         // console.log($("#inputStatedata").val());
                         $("#GraphName").val('');
@@ -249,7 +289,7 @@
             type: 'GET',
             success: (datagraph) => {
                 var rawdata = datagraph.graph.slice(1, datagraph.graph.length);
-                console.log(rawdata[0].data[0].split(","));
+                // console.log(rawdata[0].data[0].split(","));
                 if (datagraph.iotgraph.length === 0) {
                     $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
                 } else {
@@ -259,9 +299,11 @@
                                     <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
                                     <div id="name-G">${e.graphname}</div>
                                     <div class="data-graph" id="${e._id}"></div>
-                                    <div class="trackgraph">
-                                        <div><span style="background-color: #${e.color};" class="dot"></span>${e.xaxis}</div>
+                                    <div class="trackgraph" id="trackgraph${e._id}">
                                     </div>`).appendTo('#creategraph');
+                            for (let k = 0; k < e.dataposition.length; k++) {
+                                $(`<div><span style="background-color: #${e.color[k]};" class="dot"></span>${e.xaxis[k]}</div>`).appendTo(`#trackgraph${e._id}`);
+                            }
                             // var trace1 = {
                             //     type: "scatter",
                             //     mode: `${e.typegraph}`,
@@ -270,8 +312,12 @@
                             //     y: plotgraph(rawdata, `${e.dataposition}`),
                             //     line: { color: `#${e.color}` }
                             // }
-                            console.log(e.dataposition.length);
-                            var data = [new plotline(`${e.typegraph}`, rawdata, `${e.dataposition}`, `#${e.color}`).plot];
+                            console.log(e.dataposition, e.color);
+                            var data = [];
+                            for (let i = 0; i < e.dataposition.length; i++) {
+                                data.push(new plotline(`${e.typegraph}`, rawdata, `${e.dataposition[i]}`, `#${e.color[i]}`).plot)
+                            }
+                            // var data = [new plotline(`${e.typegraph}`, rawdata, `${e.dataposition}`, `#${e.color}`).plot];
                             let yaxis = e.yaxis !== undefined ? `${e.yaxis}` : `Data${e.dataposition}`;
                             var layout = {
                                 xaxis: {
@@ -298,7 +344,7 @@
                                     autorange: true,
                                     type: 'linear'
                                 },
-                                // showlegend: true
+                                showlegend: false
                             };
 
                             Plotly.newPlot(`${e._id}`, data, layout);
@@ -325,7 +371,7 @@
                                             </table>
                                         </div>`).appendTo('#creategraph');
                             var data = [];
-                            console.log(e.dataposition);
+                            console.log(e.color[0]);
                             // var count = unpack(rows, 'cnt');
                             if (e.dataposition.length === 2) {
                                 var Lats = plotgraph(rawdata, e.dataposition[0]);
