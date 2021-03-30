@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script type="text/javascript" src="/function/plotgraph.js"></script>
     <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -24,6 +25,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGjT-VKQQJ3xYkPV4nRheVKoukI4h1R2o&callback=initMap">
+        </script>
 </head>
 
 <body>
@@ -40,6 +45,20 @@
                 <input id="findname" type="text" placeholder="Search...">
             </div>
             <div id="copyapi">
+                <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
+                    data-target="#Export">Export</button>
+                <button onclick="clipboard(`localhost:3000/apigetraw/<%= nameiotdev %>`)" type="button"
+                    class="btn btn-success" name="copyapi" data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="Copy Api">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-clipboard" viewBox="0 0 16 16">
+                        <path
+                            d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" />
+                        <path
+                            d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" />
+                    </svg>&nbsp; API rawdata</button>
+                <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
+                    data-target="#ImportGraph">Import</button>
                 <button type="button" class="btn btn-success" name="buttonnav" data-toggle="modal"
                     data-target="#AddGraph">@Graph</button>
             </div>
@@ -92,8 +111,8 @@
                                 <!-- new  -->
                                 <div class="col-sm-8" id="inputState">
                                 </div>
-                                <button type="button" class="btn btn-success" id="adddatabutton">+</button>
-                                <button type="button" class="btn btn-danger" id="deldatabutton">-</button>
+                                <!-- <button type="button" class="btn btn-success" id="adddatabutton">+</button>
+                                <button type="button" class="btn btn-danger" id="deldatabutton">-</button> -->
                             </div>
                             <div class="form-group row" id="smallexdata">
                                 <label class="col-sm-2 col-form-label"></label>
@@ -133,6 +152,116 @@
             </div>
         </div>
 
+        <div class="modal fade" id="ImportGraph" tabindex="-1" aria-labelledby="ImportGraph" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Import Graph from other device</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Choose</label>
+                                <div class="col-sm-9">
+                                    <div class="col-sm-10" id="inputChoose">
+                                    </div>
+                                    <small id="alertnamei" class="form-text text-muted" name="alertimport">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Import</label>
+                                <div class="col-sm-9">
+                                    <div class="col-sm-10" id="inputImport">
+                                    </div>
+                                    <small id="alertnameim" class="form-text text-muted" name="alertimport">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row" id="foradddata">
+                                <label for="choosedata" class="col-sm-2 col-form-label">Data</label>
+                                <div class="col-sm-8" id="inputStateImport">
+                                </div>
+                            </div>
+                            <div class="form-group row" id="smallDataImport">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <small id="allDataImport" class="form-text text-muted" name="alertimport"></small>
+                                    <small id="alertstatedatai" class="form-text text-muted"></small>
+                                </div>
+                            </div>
+                            <div class="form-group row" id="hiddencolori">
+                                <label for="GraphColor" class="col-sm-2 col-form-label">Color</label>
+                                <div class="col-sm-5" id="gcolori">
+                                    <input type="color" class="form-control form-control-color" id="GraphColori"
+                                        value="#bdbdbd" title="Choose your color" name="GraphColor">
+                                </div>
+                            </div>
+                            <right>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" id="submiti" class="btn btn-primary">Submit</button>
+                            </right>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="Export" tabindex="-1" aria-labelledby="ImportGraph" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Get Graph Data</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">Choose</label>
+                                <div class="col-sm-9">
+                                    <div class="col-sm-10" id="chooseExport">
+                                    </div>
+                                    <small id="alertnamei" class="form-text text-muted" name="alertimport">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">FirstDay</label>
+                                <div class="col-sm-9">
+                                    <div class="col-sm-10">
+                                        <input type="date" data-date="" data-date-format="DD MMMM YYYY" id="datepicker1"
+                                            name="datepicker" value="">
+                                    </div>
+                                    <small id="alertnameiu" class="form-text text-muted" name="alertimport">
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="GraphName" class="col-sm-2 col-form-label">FinalDay</label>
+                                <div class="col-sm-9">
+                                    <div class="col-sm-10">
+                                        <input type="date" data-date="" data-date-format="DD MMMM YYYY" id="datepicker2"
+                                            name="datepicker" value="">
+                                    </div>
+                                    <small id="alertnameiu" class="form-text text-muted" name="alertimport">
+                                    </small>
+                                </div>
+                            </div>
+                            <right>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" id="submite" class="btn btn-primary">Submit</button>
+                            </right>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -154,7 +283,6 @@
             </div>
         </div>
 </body>
-
 <script>
     class plotline {
         constructor(mode, rawdata, position, color) {
@@ -167,10 +295,277 @@
             }
         }
     }
+
+    function initMap(id, la, ln) {
+        const map = new google.maps.Map(document.getElementById(id), {
+            center: { lat: parseFloat(la[0]), lng: parseFloat(ln[0]) },
+            zoom: 16,
+            mapTypeId: "terrain",
+        });
+        // new google.maps.Marker({
+        //     position: { lat: -25.363, lng: 131.044 },
+        //     map,
+        // });
+        // moveMarker(line);
+        return map;
+    }
+
+    function makeLine(map, rawdata, la, ln, color, id) {
+        const lineSymbol = {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 5,
+            strokeColor: "#393",
+        };
+        const symbolstart = {
+            path: "M -2,0 0,-2 2,0 0,2 z",
+            strokeColor: "#000",
+            fillColor: "#000",
+            fillOpacity: 1,
+        };
+        const symbolfinal = {
+            path: "M -2,-2 2,2 M 2,-2 -2,2",
+            strokeColor: "#000",
+            strokeWeight: 3,
+        };
+        var Path = [];
+        for (let i = 0; i < rawdata.length; i++) {
+            Path.push({ lat: parseFloat(la[i]), lng: parseFloat(ln[i]) })
+            // console.log(parseFloat(la[i]) + " " + parseFloat(ln[i]))
+        }
+        const line = new google.maps.Polyline({
+            path: Path,
+            strokeColor: color,
+            icons: [
+                {
+                    icon: symbolstart,
+                    offset: '0%'
+                }, {
+                    icon: symbolfinal,
+                    offset: '100%'
+                },
+                {
+                    icon: lineSymbol,
+                    offset: "0%",
+                }
+            ],
+            map: map,
+        });
+        let controlSpeed = 0;
+        let routetime;
+        // console.log(line);
+        const icons = line.get("icons");
+        $(`#${id}`).click((e) => {
+            e.preventDefault();
+            clearInterval(routetime);
+            controlSpeed += 1;
+            $(`#${id}`).empty();
+            if (controlSpeed >= 5) {
+                icons[2].icon = {};
+                controlSpeed = 0;
+                $(`#${id}`).append(document.createTextNode(`Play`))
+            } else if (controlSpeed !== 0) {
+                icons[2].icon = lineSymbol;
+                // animateRoute(line, 50 / controlSpeed);
+                let count = 0;
+                routetime = window.setInterval(() => {
+                    count = (count + 1) % 200;
+                    icons[2].offset = count / 2 + "%";
+                    line.set("icons", icons);
+                }, 50 / (controlSpeed / 2));
+                $(`#${id}`).append(document.createTextNode(`x${controlSpeed}`))
+            }
+        })
+    }
+
+    function makeLine2(map, nameiot, pos, color, id) {
+        $.ajax({
+            url: `/apigetraw/${nameiot}`,
+            type: 'GET',
+            success: (data) => {
+                var rawdatai = data.sort(dynamicSort("time"));
+                const lineSymbol = {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 5,
+                    strokeColor: "#393",
+                };
+                const symbolstart = {
+                    path: "M -2,0 0,-2 2,0 0,2 z",
+                    strokeColor: "#000",
+                    fillColor: "#000",
+                    fillOpacity: 1,
+                };
+                const symbolfinal = {
+                    path: "M -2,-2 2,2 M 2,-2 -2,2",
+                    strokeColor: "#000",
+                    strokeWeight: 3,
+                };
+                var Path = [];
+                for (let i = 0; i < rawdatai.length; i++) {
+                    Path.push({ lat: parseFloat(String(rawdatai[i].data).split(",")[pos[0]]), lng: parseFloat(String(rawdatai[i].data).split(",")[pos[1]]) })
+                    // console.log(parseFloat(String(rawdatai[i].data).split(",")[pos[0]]) + " " + parseFloat(String(rawdatai[i].data).split(",")[pos[1]]))
+                }
+                const line = new google.maps.Polyline({
+                    path: Path,
+                    strokeColor: color,
+                    icons: [
+                        {
+                            icon: symbolstart,
+                            offset: '0%'
+                        }, {
+                            icon: symbolfinal,
+                            offset: '100%'
+                        },
+                        {
+                            icon: lineSymbol,
+                            offset: "0%",
+                        }
+                    ],
+                    map: map,
+                });
+                let controlSpeed = 0;
+                let routetime;
+                const icons = line.get("icons");
+                $(`#${id}`).click((e) => {
+                    e.preventDefault();
+                    clearInterval(routetime);
+                    controlSpeed += 1;
+                    $(`#${id}`).empty();
+                    if (controlSpeed >= 5) {
+                        icons[2].icon = {};
+                        controlSpeed = 0;
+                        $(`#${id}`).append(document.createTextNode(`Play`))
+                    } else if (controlSpeed !== 0) {
+                        // animateRoute(line, 50 / controlSpeed);
+                        icons[2].icon = lineSymbol;
+                        let count = 0;
+                        routetime = window.setInterval(() => {
+                            count = (count + 1) % 200;
+                            icons[2].offset = count / 2 + "%";
+                            line.set("icons", icons);
+                            // console.log(icons[0].offset);
+                        }, 50 / (controlSpeed / 2));
+                        $(`#${id}`).append(document.createTextNode(`x${controlSpeed}`))
+                    }
+                })
+            }
+        })
+    }
+
+    function moveMarker(x, la, ln, markers, map) {
+        var position = { lat: parseFloat(la[x]), lng: parseFloat(ln[x]) };
+        markers.push(
+            new google.maps.Marker({
+                position: position,
+                map,
+            })
+        );
+    }
+
+    function clearMarkers(markers) {
+        if (markers.length > 1) {
+            for (let i = 0; i < markers.length - 1; i++) {
+                markers[i].setMap(null);
+            }
+        }
+        markers = [];
+    }
+
+    function animateRoute(line, timeout) {
+        let count = 0;
+        let routetime = window.setInterval(() => {
+            count = (count + 1) % 200;
+            const icons = line.get("icons");
+            icons[0].offset = count / 2 + "%";
+            line.set("icons", icons);
+            // console.log(icons[0].offset);
+        }, timeout);
+    }
+
+    function showDataImport() {
+        $("#selectImportGraph0").empty();
+        $("#selectImportGraph1").empty();
+        $("#allDataImport").empty();
+        let name = document.getElementById("selectGraph").value;
+        $.ajax({
+            url: `/apiget/rawdata/${name}`,
+            type: 'GET',
+            success: (data) => {
+                let lastdata = data[data.length - 1]
+                let arrlast = lastdata.data[0].split(",");
+                for (let i = 0; i < arrlast.length; i++) {
+                    $(`<small class="forline">data ${i + 1}: ${arrlast[i]},...</small></br>`).appendTo("#allDataImport");
+                    $(`<option value="${i}">Data ${i + 1}</option>`).appendTo("#selectImportGraph0");
+                    $(`<option value="${i}">Data ${i + 1}</option>`).appendTo("#selectImportGraph1");
+
+                }
+            }
+        })
+    }
+
+    // function showimportndata() {
+    //     console.log($("select[name=nograph]").val())
+    // }
+
+    function convertArrayOfObjectsToCSV(args) {
+        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+        data = args.data || null;
+        if (data == null || !data.length) {
+            return null;
+        }
+
+        columnDelimiter = args.columnDelimiter || ',';
+        lineDelimiter = args.lineDelimiter || '\n';
+
+        keys = Object.keys(data[0]);
+
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+
+        data.forEach(function (item) {
+            ctr = 0;
+            keys.forEach(function (key) {
+                if (ctr > 0) result += columnDelimiter;
+
+                result += item[key];
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+
+        return result;
+    }
+
+    function downloadCSV(args, stockData) {
+        var data, filename, link;
+        var csv = convertArrayOfObjectsToCSV({
+            data: stockData
+        });
+        if (csv == null) return;
+
+        filename = args.filename || 'export.csv';
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
     $(document).ready(() => {
         var addnum = 1;
         var numdata = splitdata(`<%= exampledata[exampledata.length - 1].data %>`);
         var typeg = "";
+        $(`<select id="selectImportGraph0" class="form-control" name="listdataimport">
+                <option selected disabled>Choose...</option>
+                </select>
+                <select id="selectImportGraph1" class="form-control" name="listdataimport">
+                <option selected disabled>Choose...</option>
+                </select>`).appendTo('#inputStateImport');
         $(`<select id="inputStatedata0" class="form-control" name="listdata">
             <option selected disabled>Choose...</option>
             </select>
@@ -182,15 +577,21 @@
         $("#flexRadioDefault2").click((e) => {
             $("#gcolor").empty();
             $("#inputState").empty();
-            addnum = 1;
+            addnum = 2;
             // addnum += 1;
             $(`<input type="color" class="form-control form-control-color" id="GraphColor0"
             value="#bdbdbd" title="Choose your color" name="GraphColor">`).appendTo("#gcolor");
-            for (let l = 0; l <= addnum; l++) {
-                $(`<select id="inputStatedata${l}" class="form-control" name="listdata">
-                <option selected disabled>Choose...Latitude</option>
+            // for (let l = 0; l < addnum; l++) {
+            //     $(`<select id="inputStatedata${l}" class="form-control" name="listdata">
+            //     <option selected disabled>Choose...</option>
+            //     </select>`).appendTo("#inputState")
+            // }
+            $(`<select id="inputStatedata0" class="form-control" name="listdata">
+                <option selected disabled>Choose...lattitude</option>
                 </select>`).appendTo("#inputState")
-            }
+            $(`<select id="inputStatedata1" class="form-control" name="listdata">
+                <option selected disabled>Choose...longtitude</option>
+                </select>`).appendTo("#inputState")
             for (let k = 0; k < numdata.length; k++) {
                 $(`<option class="forline">data ${k + 1}</option> `).appendTo("select[name=listdata]");
             }
@@ -201,7 +602,7 @@
             typeg = "scattermapbox";
         })
         $("#flexRadioDefault1").click((e) => {
-            addnum = 0;
+            addnum = 1;
             $("#unitinput").empty();
             $("#inputState").empty();
             $("#gcolor").empty();
@@ -220,26 +621,64 @@
             $("#hiddenu").show();
             typeg = "lines+markers";
         })
-        $("#adddatabutton").click((e2) => {
-            addnum += 1;
-            $(`<select id="inputStatedata${addnum}" class="form-control" name="listdata">
-            <option selected disabled>Choose...</option>
-            </select>`).appendTo("#inputState")
-            $(`<input type="color" class="form-control form-control-color" id="GraphColor${addnum}"
-            value="#bdbdbd" title="Choose your color" name="GraphColor">`).appendTo("#gcolor")
-            $(`<input type="text" class="form-control" id="unit${addnum}" placeholder="Unit..." name="GraphColor">`).appendTo('#unitinput');
-            for (let k = 0; k < numdata.length; k++) {
-                $(`<option class="forline">data ${k + 1}</option> `).appendTo(`#inputStatedata${addnum}`);
+        $.ajax({
+            url: `/apiget/t/device`,
+            type: 'GET',
+            success: (data) => {
+                $(`<select id="selectGraph" class="form-control" name="listdata" onchange="showDataImport()">
+                                    <option selected disabled>Choose...</option>
+                                    </select>
+                                    `).appendTo("#inputImport")
+                data.forEach((el) => {
+                    $(`<option value="${el.name}">${el.name}</option>`).appendTo("#selectGraph");
+                })
             }
         })
-        $("#deldatabutton").click((e2) => {
-            if (addnum !== 1) {
-                $(`#inputStatedata${addnum}`).remove();
-                $(`#GraphColor${addnum}`).remove();
-                $(`#unit${addnum}`).remove();
-                addnum -= 1;
+        $("#submite").click((e) => {
+            e.preventDefault();
+            $.ajax({
+                url: `/apiget/rawexport/<%= nameiotdev %>/${document.getElementById('ChooseDataExport').value}`,
+                type: 'GET',
+                success: (data) => {
+                    // console.log(data)
+                    let collect = [];
+                    for (key in data) {
+                        firstday = parseInt($("#datepicker1").val().replace(/-/g, ""));
+                        finalday = parseInt($("#datepicker2").val().replace(/-/g, ""));
+                        if (parseInt(data[key].time.replace(/-/g, "")) >= firstday && parseInt(data[key].time.replace(/-/g, "")) <= finalday) {
+                            collect.push(data[key])
+                        }
+                    }
+                    downloadCSV({ filename: `<%= nameiotdev %>` }, collect);
+                    $('#Export').modal('hide');
+                }
+            })
+        })
+        $("#submiti").click((e) => {
+            e.preventDefault();
+            $("#alertnamei").empty();
+            $("#alertnameim").empty();
+            var arraypos = [];
+            var sel = document.getElementById('selectGraph').value;
+            var idi = document.getElementById('ChooseDataImport').value;
+            arraypos.push($('#selectImportGraph0').val());
+            arraypos.push($('#selectImportGraph1').val())
+            if (idi === "Choose...") {
+                $("#alertnamei").append("please full fill.")
+            } else if (sel === "Choose...") {
+                $("#alertnameim").append("please full fill.")
+            } else {
+                $.ajax({
+                    url: `/apiput/import/<%= nameiotdev %>/${idi}`,
+                    type: 'PUT',
+                    data: ({ nameimport: `${sel}`, datapos: arraypos, colori: $('#GraphColori').val().replace(/#/g, "") }),
+                    success: (data) => {
+                        location.reload();
+                    }
+                })
             }
         })
+
         $("#submit").click((e) => {
             e.preventDefault();
             var arraydata = [];
@@ -248,11 +687,11 @@
             $("#alertname").empty();
             $("#alertstatedata").empty();
             $("#alertstategraph").empty();
-            for (let k = 0; k < addnum + 1; k++) {
+            for (let k = 0; k < addnum; k++) {
                 arraydata.push($(`#inputStatedata${k}`).val().replace(/[^0-9.]/g, "") - 1);
             }
             if (typeg === "lines+markers") {
-                for (let k = 0; k < addnum + 1; k++) {
+                for (let k = 0; k < addnum; k++) {
                     arraycolor.push($(`#GraphColor${k}`).val().replace(/#/g, ""));
                     arrayunit.push($(`#unit${k}`).val());
                 }
@@ -266,12 +705,10 @@
             } else if (typeg === "") {
                 $("#alertstategraph").append("please choose type.")
             } else {
-                console.log(arraycolor);
-                console.log(arraydata);
                 $.ajax({
                     url: `/apiput/dashboard/<%= nameiotdev %>`,
                     type: 'PUT',
-                    data: ({ graphname: $("#GraphName").val(), datapositon: [...arraydata], typegraph: typeg, colorgraph: arraycolor, xaxis: arrayunit, yaxis: $("#yaxis").val() }),
+                    data: ({ graphname: $("#GraphName").val(), datapositon: arraydata, typegraph: typeg, colorgraph: arraycolor, xaxis: arrayunit, yaxis: $("#yaxis").val() }),
                     success: (data) => {
                         // console.log($("#inputStatedata").val());
                         $("#GraphName").val('');
@@ -288,8 +725,45 @@
             url: `/apiget/n/<%= nameiotdev %>`,
             type: 'GET',
             success: (datagraph) => {
-                var rawdata = datagraph.graph.slice(1, datagraph.graph.length);
-                // console.log(rawdata[0].data[0].split(","));
+                $(`<select id="ChooseDataImport" class="form-control" name="listdata">
+                <option selected disabled>Choose...</option>
+                </select>
+                `).appendTo("#inputChoose")
+                $(`<select id="ChooseDataExport" class="form-control" name="listdata">
+                <option selected disabled>Choose...</option>
+                </select>
+                `).appendTo("#chooseExport")
+                datagraph.iotgraph.forEach((graph) => {
+                    $(`<option value="${graph._id}">${graph.graphname}</option>
+                    `).appendTo("#ChooseDataImport");
+                    $(`<option value="${graph._id}">${graph.graphname}</option>
+                        `).appendTo("#ChooseDataExport");
+                })
+                var rawdata = datagraph.graph.slice(1, datagraph.graph.length).sort(dynamicSort("time"));
+                $("#datepicker1").val(rawdata[0].time.slice(0, 10));
+                $("#datepicker2").val(rawdata[rawdata.length - 1].time.slice(0, 10));
+
+                // $("#ChooseDataExport").on("change", () => {
+                //     console.log(1)
+                // }).trigger("change")
+
+
+                // $("#datepicker1").on("change", () => {
+                //     this.setAttribute(
+                //         "data-date",
+                //         moment(this.value, "YYYY-MM-DD")
+                //             .format(this.getAttribute("data-date-format"))
+                //     )
+                // }).trigger("change")
+                // $("#datepicker2").on("change", () => {
+                //     this.setAttribute(
+                //         "data-date",
+                //         moment(this.value, "YYYY-MM-DD")
+                //             .format(this.getAttribute("data-date-format"))
+                //     )
+                // }).trigger("change")
+
+                var numraw = rawdata.length;
                 if (datagraph.iotgraph.length === 0) {
                     $('<div id="alertaddgraph">Please add data graph.</div>').appendTo('#creategraph');
                 } else {
@@ -297,27 +771,17 @@
                         if (e.typegraph === "lines+markers") {
                             $(`<div class="list-graph">
                                     <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
-                                    <div id="name-G">${e.graphname}</div>
                                     <div class="data-graph" id="${e._id}"></div>
-                                    <div class="trackgraph" id="trackgraph${e._id}">
-                                    </div>`).appendTo('#creategraph');
+                                    <div class="trackgraph" id="trackgraph${e._id}"><h2>${e.graphname}</h2>
+                                        </div>`).appendTo('#creategraph');
                             for (let k = 0; k < e.dataposition.length; k++) {
                                 $(`<div><span style="background-color: #${e.color[k]};" class="dot"></span>${e.xaxis[k]}</div>`).appendTo(`#trackgraph${e._id}`);
                             }
-                            // var trace1 = {
-                            //     type: "scatter",
-                            //     mode: `${e.typegraph}`,
-                            //     // name: 'AAPL High',
-                            //     x: plottime(rawdata),
-                            //     y: plotgraph(rawdata, `${e.dataposition}`),
-                            //     line: { color: `#${e.color}` }
-                            // }
-                            console.log(e.dataposition, e.color);
+
                             var data = [];
                             for (let i = 0; i < e.dataposition.length; i++) {
                                 data.push(new plotline(`${e.typegraph}`, rawdata, `${e.dataposition[i]}`, `#${e.color[i]}`).plot)
                             }
-                            // var data = [new plotline(`${e.typegraph}`, rawdata, `${e.dataposition}`, `#${e.color}`).plot];
                             let yaxis = e.yaxis !== undefined ? `${e.yaxis}` : `Data${e.dataposition}`;
                             var layout = {
                                 xaxis: {
@@ -351,74 +815,122 @@
                         } else if (e.typegraph === "scattermapbox") {
                             $(`<div class="list-graph">
                                         <div class="closebutton" onclick="todeletegraph('${datagraph.name}','${e._id}')">&times;</div>
-                                        <div id="name-G">${e.graphname}</div>
-                                        <div class="data-graph" id="${e._id}"></div>
+                                        <div id="cssnograph">
+                                            <div>
+                                                <select id = "nograph${e._id}" name="nograph" class= "form-control">
+                                                    <option selected>1</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <button id="playSpeed${e._id}" type="button" class="btn btn-primary">Play</button>
+                                            </div>
+                                            </div>
+                                        <div class="main-mapgraph">
+                                        <div class="data-mapgraph" id="${e._id}">
+                                        </div>
+                                        <div id="Rangetool${e._id}">No. location</div>
+                                        <div id="rangemenu">
+                                        <p class="textrange">start</p>
+                                        <div id="form-range">
+                                        <input type="range" class="form-range" min="1" max="${numraw}" id="Range${e._id}">
+                                        </div>
+                                        <p class="textrange">end</p>
+                                        </div>
+                                        </div>
                                         <div class="trackgraph">
-                                            <div class="Header">
-                                            <span style="background-color: #${e.color};" class="dot"></span>Bookmarks</div>
+                                            <div class="Header" id="${e._id + 'Header'}">
+                                            <span style="background-color: #${e.color};" class="dot"></span>${e.graphname}</div>
                                             <div class="Subhead" id="${e._id + 'Subhead'}">
-                                            <table>
+                                            <table class="table">
+                                                <thead class="thead-dark">
                                                 <tr>
-                                                    <th>number/</th>
-                                                    <th>time/</th>
-                                                    <th>lat/</th>
-                                                    <th>lon</th>
+                                                    <th class="sizeno">No</th>
+                                                    <th>Time</th>
+                                                    <th>Latitude</th>
+                                                    <th>Longitude</th>
                                                 </tr>
+                                                </thead>
+                                                <tbody class="tbody" id="${e._id + 'list'}">
+                                                </tbody>
                                             </table>
                                             </div>
-                                            <table>
-                                                <div class="listtrack" id="${e._id + 'list'}"></div>
-                                            </table>
-                                        </div>`).appendTo('#creategraph');
+                                            </div>`).appendTo('#creategraph');
+                            if (e.dataimport.length > 0) {
+                                for (let m = 0; m <= e.dataimport.length - 1; m++) {
+                                    $(`<option>${m + 2}</option>`).appendTo(`#nograph${e._id}`);
+                                }
+                            }
                             var data = [];
-                            console.log(e.color[0]);
-                            // var count = unpack(rows, 'cnt');
+                            let markers = [];
+                            var mu;
                             if (e.dataposition.length === 2) {
                                 var Lats = plotgraph(rawdata, e.dataposition[0]);
                                 var Lons = plotgraph(rawdata, e.dataposition[1]);
+                                var map = initMap(`${e._id}`, Lats, Lons);
                             } else {
-                                var Lons = plotmap(rawdata, 0, 1);
                                 var Lats = plotmap(rawdata, 0, 0);
+                                var Lons = plotmap(rawdata, 0, 1);
+                                var map = initMap(`${e._id}`, Lats, Lons);
                             }
-                            // `${e.dataposition}`
-                            for (var i = 0; i < rawdata.length - 1; i++) {
-                                $(`<tr> <td>${i + 1}</td><td> ${plottime(rawdata)[i]}</td> <td>${Lons[i]}</td><td>${Lats[i]}</td> </tr>`).appendTo(`#${e._id + 'list'}`);
-                                // var opacityValue = count[i] / getMaxOfArray(count);
+                            makeLine(map, rawdata, Lats, Lons, `#${e.color}`, `playSpeed${e._id}`);
+                            for (let i = 0; i < e.dataimport.length; i++) {
+                                if (e.dataimport[i] === undefined) {
+                                    continue;
+                                } else {
+                                    makeLine2(map, e.dataimport[i].nameimport, e.dataimport[i].datapos, `#${e.dataimport[i].colori}`, `playSpeed${e._id}`)
+                                }
+                            }
+                            $(`#Range${e._id}`).mousedown(() => {
+                                let repeat;
+                                var mu = setInterval(() => {
+                                    moveMarker($(`#Range${e._id}`).val() - 1, Lats, Lons, markers, map);
+                                    if ($(`#Range${e._id}`).val() !== repeat) {
+                                        clearMarkers(markers);
+                                    }
+                                    $(`#Rangetool${e._id}`).empty();
+                                    $(`#Rangetool${e._id}`).append("No : " + $(`#Range${e._id}`).val() + " => " + `Time : ${rawdata[$(`#Range${e._id}`).val() - 1].time} ` + `latititude: ${Lats[$(`#Range${e._id}`).val() - 1]} longitude: ${Lons[$(`#Range${e._id}`).val() - 1]}`);
+                                    repeat = $(`#Range${e._id}`).val();
+                                }, 100)
 
-                                var result = {
-                                    type: 'scattermapbox',
-                                    name: `${i + 1}`,
-                                    // locationmode: 'USA-states',
-                                    lon: [Lons[i], Lons[i + 1]],
-                                    lat: [Lats[i], Lats[i + 1]],
-                                    mode: 'lines',
-                                    line: {
-                                        width: 2,
-                                        color: `#${e.color}`
-                                    },
-                                    // opacity: opacityValue
-                                };
+                                $(`#Range${e._id}`).mouseup(() => {
+                                    clearInterval(mu);
+                                });
+                            });
+                            // change data list for lines
+                            $(`#nograph${e._id}`).on('change', () => {
+                                if ($(`#nograph${e._id}`).val() === '1') {
+                                    $(`#${e._id + 'Header'}`).empty();
+                                    $(`#${e._id + 'list'}`).empty();
+                                    $(`<span style="background-color: #${e.color};" class="dot"></span>${e.graphname}</div>`).appendTo(`#${e._id + 'Header'}`);
+                                    for (var i = 0; i < rawdata.length; i++) {
+                                        $(`<tr> <th scope="row" class="sizeno">${i + 1}</th><td>${plottime(rawdata)[i]}</td><td>${Lats[i]}</td><td>${Lons[i]}</td></tr>`).appendTo(`#${e._id + 'list'}`);
+                                    };
+                                } else {
+                                    $(`#${e._id + 'Header'}`).empty();
+                                    $(`#${e._id + 'list'}`).empty();
+                                    $(`<span style="background-color: #${e.dataimport[$(`#nograph${e._id}`).val() - 2].colori};" class="dot"></span>${e.dataimport[$(`#nograph${e._id}`).val() - 2].nameimport}</div>`).appendTo(`#${e._id + 'Header'}`);
+                                    $.ajax({
+                                        url: `/apiget/n/${e.dataimport[$(`#nograph${e._id}`).val() - 2].nameimport}`,
+                                        type: 'GET',
+                                        success: (datagraph) => {
+                                            let dataimp = datagraph.graph.slice(1).sort(dynamicSort("time"));
+                                            for (let i = 0; i < dataimp.length; i++) {
+                                                let lati = String(dataimp[i].data).split(",")[e.dataimport[$(`#nograph${e._id}`).val() - 2].datapos[0]];
+                                                let loni = String(dataimp[i].data).split(",")[e.dataimport[$(`#nograph${e._id}`).val() - 2].datapos[1]];
+                                                $(`<tr> <th scope="row" class="sizeno">${i + 1}</th><td>${dataimp[i].time}</td><td>${lati}</td><td>${loni}</td></tr>`).appendTo(`#${e._id + 'list'}`);
+                                            }
+                                        }
+                                    })
+                                }
+                            }).trigger("change")
 
-                                data.push(result);
-                            };
-
-                            var layout = {
-                                // title: 'Feb. 2011 American Airline flight paths',
-                                showlegend: false,
-                                mapbox: {
-                                    style: "stamen-terrain",
-                                    center: { lon: Lons[0], lat: Lats[0] },
-                                    zoom: 5
-                                },
-                            };
-
-                            Plotly.newPlot(`${e._id}`, data, layout, { showLink: false });
                         }
                     });
                 }
             }
         })
     })
+
     function todeletegraph(nameiotdev, id) {
         $(document).ready((e) => {
             $('#confirmModal').modal('toggle');
@@ -429,7 +941,6 @@
                     type: 'GET',
                     // success: (suc) => { alert("already") },
                     error: (err) => { // error it's not run while using it
-                        console.log(id);
                         $('#errmessage').text(`Can not find ${id} in database.`);
                         $('#errModal').modal('toggle');
                     }
@@ -437,6 +948,29 @@
                 location.reload();
             })
         })
+    }
+    function clipboard(Text) {
+        let el = document.createElement('textarea');
+        el.value = Text;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+
+    function dynamicSort(property) {
+        var sortOrder = 1;
+        if (property[0] === "-") {
+            sortOrder = -1;
+            property = property.substr(1);
+        }
+        return function (a, b) {
+            var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortOrder;
+        }
     }
 </script>
 

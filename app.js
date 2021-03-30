@@ -34,6 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+const { StringDecoder } = require('string_decoder');
+const decoder = new StringDecoder('utf8');
+
+// decoder.write(Buffer.from([0xE2]));
+// decoder.write(Buffer.from([0x82]));
+// console.log(decoder.end(Buffer.from([0xAC])));
+
 function gettime() {
   let date_ob = new Date();
   let date = ("0" + date_ob.getDate()).slice(-2);
@@ -44,6 +51,19 @@ function gettime() {
   let seconds = ("0" + date_ob.getSeconds()).slice(-2);
   return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`
 }
+
+function dynamicSort(property) {
+  var sortOrder = 1;
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+  return function (a, b) {
+    var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+    return result * sortOrder;
+  }
+}
+// 2020-05-9
 
 async function getonline() {
   const datauser = await dataUser.find();
@@ -70,6 +90,8 @@ async function findandsave(nameraspi, iot, message) {
     { name: iot },
     { dconnect: inforaspi._id }
   );
+  // console.log(decoder.end(Buffer.from(message)).split(","));
+  let newmessage = decoder.end(Buffer.from(message)).split(",");
   if (topics === null) {
     const newiot = new dataUser({
       name: iot,
@@ -82,33 +104,40 @@ async function findandsave(nameraspi, iot, message) {
       },
     })
     await newiot.save();
-    const updateiot = await dataUser.findOneAndUpdate(
-      { name: iot, dconnect: inforaspi._id },
-      {
-        $addToSet: {
-          graph: {
-            time: gettime(),
-            data: message
+    if (true) {
+      const updateiot = await dataUser.findOneAndUpdate(
+        { name: iot, dconnect: inforaspi._id },
+        {
+          $addToSet: {
+            graph: {
+              //gettime()
+              //message
+              time: `${newmessage[0]}`,
+              data: `${newmessage.slice(1)}`
+            }
           }
+        }, (err, doc) => {
+          if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
         }
-      }, (err, doc) => {
-        if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
-      }
-    );
+      );
+    }
   } else if (topics !== null) {
-    const updateiot = await dataUser.findOneAndUpdate(
-      { name: iot, dconnect: inforaspi._id },
-      {
-        $addToSet: {
-          graph: {
-            time: gettime(),
-            data: message
+    if (true) {
+      // console.log(message);
+      const updateiot = await dataUser.findOneAndUpdate(
+        { name: iot, dconnect: inforaspi._id },
+        {
+          $addToSet: {
+            graph: {
+              time: `${newmessage[0]}`,
+              data: `${newmessage.slice(1)}`
+            }
           }
+        }, (err, doc) => {
+          if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
         }
-      }, (err, doc) => {
-        if (err) console.log(`${nameraspi} Error input data on : ${iot}` + err);
-      }
-    );
+      );
+    }
   } else {
     console.log("error");
   }
@@ -270,6 +299,57 @@ app.put("/apiput/dashboard/:namedevice", async (req, res) => {
   res.status(202).send(datauser);
 })
 
+//601c37a2d0d8d33768bbaed3
+app.put("/apiput/import/:name/:id", async (req, res) => {
+  var dataimport;
+  const { name, id } = req.params;
+  const payload = req.body;
+  const datauser = await dataUser.findOne({ name: name, type: "device" });
+  // for (let i = 0; i < datauser.iotgraph.length; i++) {
+  //   if (datauser.iotgraph[i]._id.toString() === id.toString()) {
+  dataimport = await dataUser.findOneAndUpdate(
+    { name: name, iotgraph: { "$elemMatch": { "_id": id } } },
+    {
+      $addToSet: {
+        "iotgraph.$.dataimport": payload
+        // {
+        //   nameimport: req.body.graphname,
+        //   datapos: req.body.graphname,
+        //   colori: req.body.graphname
+        // }
+      }
+    },
+    (err, doc) => {
+      if (err) console.log(`Something wrong when update ${name}`);
+      console.log(`Update success ${name}`);
+    }
+  )
+  //   // const datauser = await dataUser.findOneAndUpdate(
+  //   { name: name, type: "device" },
+  //   // { type: "device" },
+  //   // {
+  //   //   iotgraph: {
+  //   //     graphname: "GPSformdog"
+  //   //   }
+  //   //   // $addToSet: {
+  //   //   //   iotgraph: {
+  //   //   //     graphname: req.body.graphname,
+  //   //   //     dataposition: req.body.datapositon,
+  //   //   //     typegraph: req.body.typegraph,
+  //   //   //     color: req.body.colorgraph,
+  //   //   //     xaxis: req.body.xaxis,
+  //   //   //     yaxis: req.body.yaxis,
+  //   //   //   }
+  //   //   // },
+  //   // },
+  //   (err, doc) => {
+  //     if (err) console.log(`Something wrong when update ${name}`);
+  //     // console.log(`Update success ${namedevice}`);
+  //   }
+  // );
+  res.json(dataimport);
+});
+
 // add data from iot to collect in graph array
 app.put("/apiput/iotdata/:namedevice", async (req, res) => {
   var payload = req.body;
@@ -287,6 +367,7 @@ app.put("/apiput/iotdata/:namedevice", async (req, res) => {
   );
   res.json(datauser);
 });
+
 
 app.put("/apiput/:namedevice", async (req, res) => {
   const payload = req.body;
@@ -416,6 +497,85 @@ app.get("/apiget/sr/:name", async (req, res) => {
   res.json(datauser);
 });
 
+// get api data
+app.get("/apigetraw/:nameiot", async (req, res) => {
+  const { nameiot } = req.params;
+  const datauser = await dataUser.findOne({ name: nameiot });
+  const dataiot = datauser.graph.slice(1, datauser.graph.length);
+  res.json(dataiot);
+});
+
+//get graph data
+app.get("/apiget/rawexport/:name/:id", async (req, res) => {
+  const { name, id } = req.params;
+  let dataexport = [];
+  const datauser = await dataUser.findOne({ name: name });
+  const alldata = await dataUser.find();
+  const rawdata = datauser.graph.slice(1);
+  try {
+    for (let i = 0; i < datauser.iotgraph.length; i++) {
+      if (String(datauser.iotgraph[i]._id) === id) {
+        if (datauser.iotgraph[i].typegraph === "scattermapbox") {
+          rawdata.forEach((raw) => {
+            dataexport.push({
+              nodename: name,
+              time: raw.time,
+              latitude: String(raw.data).split(",")[datauser.iotgraph[i].dataposition[0]],
+              longtitude: String(raw.data).split(",")[datauser.iotgraph[i].dataposition[1]]
+            })
+          })
+          if (datauser.iotgraph[i].dataimport !== undefined) {
+            for (let j = 0; j < datauser.iotgraph[i].dataimport.length; j++) {
+              alldata.forEach((each) => {
+                if (each.name === datauser.iotgraph[i].dataimport[j].nameimport) {
+                  let tgdata = each.graph.slice(1);
+                  tgdata.forEach((data2) => {
+                    dataexport.push({
+                      nodename: each.name,
+                      time: data2.time,
+                      latitude: String(data2.data).split(",")[datauser.iotgraph[i].dataimport[j].datapos[0]],
+                      longtitude: String(data2.data).split(",")[datauser.iotgraph[i].dataimport[j].datapos[1]]
+                    });
+                  })
+                }
+              })
+            }
+          }
+        }
+        else {
+          rawdata.forEach((raw) => {
+            dataexport.push({
+              nodename: name,
+              time: raw.time,
+              data: String(raw.data)
+            })
+          })
+        }
+      }
+      // if (dataexport !== []) {
+      //   console.log(dataexport.sort(dynamicSort("time")))
+      // }
+    }
+    // console.log(dataexport.sort(dynamicSort("time")))
+    res.json(dataexport.sort(dynamicSort("time")));
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
+
+})
+
+// app.get("/apigetraw/:nameiot/:id", async (req, res) => {
+//   const { nameiot, id } = req.params;
+//   const datauser = await dataUser.findOne({ name: nameiot });
+//   const getid = await datauser.iotgraph.findOne({ _id: id });
+//   // datauser.iotgraph.forEach( (e) => {
+
+//   // });
+//   // const raw = 
+//   res.json(getid);
+// });
+
 // get raw data
 app.get("/apiget/rawdata/:name", async (req, res) => {
   try {
@@ -471,6 +631,13 @@ app.get("/dashboard/:name", async (req, res, next) => {
   }
 })
 
+app.get("/docs", async (req, res) => {
+  try {
+    res.status(200).render("docs.ejs");
+  } catch (error) {
+    res.send(404).send(error);
+  }
+})
 app.get("/selectiot/:name");
 app.get("/add", addnRegister);
 app.get("/all", allProject);
@@ -522,6 +689,6 @@ mongoose
 
 http.listen(port, () => {
   console.log(
-    `This is Platform for Manage Tracking Device \nServer is running on port ${port}`
+    `This is Platform for Manage Tracking Device \nServer is running on port ${port} `
   );
 });

@@ -1,7 +1,7 @@
 .list-graph {
     border-color: rgba(110, 110, 110, 0.76);
     border-radius: 1em;
-    height: 35em;
+    height: 40em;
     width: 97%;
     margin: 0.8em;
     padding-right: 0;
@@ -12,16 +12,55 @@
 }
 
 .data-graph {
-    margin-top: 20px;
+    padding-top: 10px;
+    margin-top: -10px;
     margin-left: 20px;
     width: 65%;
+    height: 550px;
+}
+
+.data-mapgraph{
+    width: 100%;
+    height: 420px;
+    margin-bottom: 30px;
+}
+
+.main-mapgraph{
+    margin: 35px 10px -20px 50px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#rangemenu{
+    margin-bottom: 0px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-range{
+    width: 100%;
+}
+#form-range {
+    position: relative;
+    display: inline-block;
+    width: 90%;
+  }
+
+
+.textrange{
+    margin: 10px;
 }
 
 #name-G{
     position: absolute;
     font-size: 2em;
     left: 50px;
-    top: 30px;
+    top: 0px;
     z-index: 1;
 }
 
@@ -31,13 +70,14 @@
 }
 
 .trackgraph{
-    margin: 50px 0 50px 0;
+    margin: 15px 20px 50px 30px;
     border-style: solid;
     border: 1em;
     width: 30%;
     height: 80%;
+    font-size: 20px;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     flex-direction: column;
     display: flex;
 }
@@ -47,10 +87,6 @@
     margin-bottom: 10px;;
 }
 
-.listtrack {
-    width: 100%;
-    overflow: scroll;
-}
 
 .dot {
     height: 10px;
@@ -61,11 +97,25 @@
 }
 
 table {
-    width: 100%;
+    width: 300px;
+    height: 100%;
 }
 
-.listtrack td {
+table, th, td {
+    border: 1px solid black;
+    width: 100px;
+}
+
+th {
+    font-size: 14px;
+}
+
+.table td {
     padding: 0 0 0 8px;
+}
+
+.tbody {
+    font-size: small;
 }
 
 #adddatabutton, #deldatabutton{
@@ -77,16 +127,81 @@ table {
     margin: 12px 5px 5px 0px;
 }
 
-select[name=listdata], input[name=GraphColor]{
+#inputStateImport{
+    margin-left: 14px;
+}
+
+select[name=listdata], input[name=GraphColor],select[name=listdataimport]{
     margin: 8px 0 8px 0;
+}
+
+small[name=alertimport]{
+    margin: 0px 0 0px 20px;
 }
 
 #smallexdata {
     margin-top: -20px;
 }
-/* .Subhead tr {
-    padding-left: 80px;
+.Subhead { 
+    overflow: scroll;
+    display: flex;
 }
+
 .Subhead th {
-    padding: 0 30px 0 30px;
+    align-items: center;
+    justify-content: center;
+} 
+
+.sizeno{
+    width:50px;
+}
+
+svg {
+    margin: 0;
+    padding: 0;
+}
+
+#cssnograph{
+    display: flex;
+    position:absolute;
+    margin: 25px 0 0 48px;
+    flex-direction: row;
+}
+
+#cssnograph div{
+    margin: 0 5px 0 5px;
+}
+
+#cssnograph button{
+    width: 60px;
+}
+
+option[name=nograph] {
+    width: 60px;
+}
+
+/* input[name=datepicker] {
+    position: relative;
+    width: 150px; height: 35px;
+    color: white;
+}
+
+input[name=datepicker]:before {
+    position: absolute;
+    top: 3px; left: 3px;
+    content: attr(data-date);
+    display: inline-block;
+    color: rgba(110, 110, 110);
+}
+
+input[name=datepicker]::-webkit-datetime-edit, input[name=datepicker]::-webkit-inner-spin-button, input[name=datepicker]::-webkit-clear-button {
+    display: none;
+}
+
+input[name=datepicker]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 3px;
+    right: 0;
+    color: #A0C5E8;
+    opacity: 1;
 } */

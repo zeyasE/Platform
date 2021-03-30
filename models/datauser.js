@@ -11,7 +11,23 @@ const datauserSchema = mongoose.Schema({
   ip: { type: String, require: true }, // ip for raspi
   apiiot: { type: String, require: true }, // api for iot
   // typegraph: { type: [String], require: true }, // type of graph for iot device
-  iotgraph: [{ graphname: { type: String }, dataposition: { type: [String], require: true }, typegraph: { type: String, require: true }, color: { type: [String], require: true }, xaxis: { type: [String], require: true }, yaxis: { type: String, require: true }, dataname: { type: String, require: true } }], // name of graph
+  iotgraph: [{
+    graphname: { type: String },
+    dataposition: { type: [String], require: true },
+    typegraph: {
+      type: String,
+      require: true,
+    },
+    color: { type: [String], require: true },
+    xaxis: { type: [String], require: true },
+    yaxis: { type: String, require: true },
+    dataname: { type: String, require: true },
+    dataimport: [{
+      nameimport: { type: String, require: true },
+      datapos: { type: [String], require: true },
+      colori: { type: [String], require: true }
+    }]
+  }], // name of graph
   graph: [{ time: { type: String, require: true }, data: { type: [String], require: true }, }], // make graph
 })
 
